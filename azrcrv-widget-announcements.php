@@ -658,7 +658,7 @@ class azrcrv_wa_register_widget extends WP_Widget {
 			
 			if (
 					// today
-					(date_format(date_create($announcement->post_date), "Y-m-d") == date("Y-m-d"))
+					(date_format(date_create($announcement->post_date), "Y-m-d") == date("Y-m-d") AND $repeat_details['type'] == 'none')
 				OR
 					// annual repeat
 					(date_format(date_create($announcement->post_date), "m-d") == date('m-d') AND $repeat_details['type'] == 'annual')
