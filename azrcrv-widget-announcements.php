@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------------------
  * Plugin Name: Widget Announcements
  * Description: Announce holidays, events, achievements and notable historical figures in a widget.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: azurecurve
  * Author URI: https://development.azurecurve.co.uk/classicpress-plugins/
  * Plugin URI: https://development.azurecurve.co.uk/classicpress-plugins/azrcrv-widget-announcements/
@@ -49,8 +49,8 @@ add_action('widgets_init', 'azrcrv_wa_create_widget');
 add_filter('plugin_action_links', 'azrcrv_wa_add_plugin_action_link', 10, 2);
 add_filter('codepotent_update_manager_image_path', 'azrcrv_wa_custom_image_path');
 add_filter('codepotent_update_manager_image_url', 'azrcrv_wa_custom_image_url');
-add_filter( 'gettext', 'azrcrv_wa_admin_post_excerpt_change_labels', 10, 2 );
 add_filter('admin_post_thumbnail_html', 'azrcrv_wa_admin_post_thumbnail_add_label', 10, 3);
+add_action('current_screen', 'azrcrv_wa_current_screen_callback');
 
 /**
  * Custom plugin image path.
@@ -161,6 +161,18 @@ function azrcrv_wa_create_custom_post_type(){
 }
 
 /**
+ * Make sure labels only changes for this post type
+ *
+ * @since 1.0.1
+ *
+ */
+function azrcrv_wa_current_screen_callback($screen) {
+    if( is_object($screen) && $screen->post_type == 'widget-announcement' ) {
+        add_filter( 'gettext', 'azrcrv_wa_admin_post_excerpt_change_labels', 99, 3 );
+    }
+}
+
+/**
  * Change labels in the excerpt box
  *
  * @since 1.0.0
@@ -176,6 +188,7 @@ function azrcrv_wa_admin_post_excerpt_change_labels($translation, $original){
 			return  '';
 		}
 	}
+	
 	return $translation;
 }
 
