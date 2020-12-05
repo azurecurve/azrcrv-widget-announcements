@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------------------
  * Plugin Name: Widget Announcements
  * Description: Announce holidays, events, achievements and notable historical figures in a widget.
- * Version: 1.0.1
+ * Version: 1.1.0
  * Author: azurecurve
  * Author URI: https://development.azurecurve.co.uk/classicpress-plugins/
  * Plugin URI: https://development.azurecurve.co.uk/classicpress-plugins/azrcrv-widget-announcements/
@@ -44,12 +44,12 @@ add_action('save_post', 'azrcrv_wa_save_sidebar_metabox', 10, 1);
 add_action('plugins_loaded', 'azrcrv_wa_load_languages');
 add_action('wp_enqueue_scripts', 'azrcrv_wa_load_css');
 add_action('widgets_init', 'azrcrv_wa_create_widget');
+add_action('admin_post_azrcrv_wa_save_options', 'azrcrv_wa_save_options');
 
 // add filters
 add_filter('plugin_action_links', 'azrcrv_wa_add_plugin_action_link', 10, 2);
 add_filter('codepotent_update_manager_image_path', 'azrcrv_wa_custom_image_path');
 add_filter('codepotent_update_manager_image_url', 'azrcrv_wa_custom_image_url');
-add_filter('admin_post_thumbnail_html', 'azrcrv_wa_admin_post_thumbnail_add_label', 10, 3);
 add_action('current_screen', 'azrcrv_wa_current_screen_callback');
 
 /**
@@ -97,6 +97,50 @@ function azrcrv_wa_load_languages() {
  */
 function azrcrv_wa_load_css(){
 	wp_enqueue_style('azrcrv-wa', plugins_url('assets/css/style.css', __FILE__));
+}
+
+/**
+ * Get options including defaults.
+ *
+ * @since 1.1.0
+ *
+ */
+function azrcrv_wa_get_option($option_name){
+ 
+	$defaults = array(
+						'widget' => array(
+											'width' => 300,
+											'height' => 300,
+										),
+					);
+
+	$options = get_option($option_name, $defaults);
+
+	$options = azrcrv_wa_recursive_parse_args($options, $defaults);
+
+	return $options;
+
+}
+
+/**
+ * Recursively parse options to merge with defaults.
+ *
+ * @since 1.1.0
+ *
+ */
+function azrcrv_wa_recursive_parse_args( $args, $defaults ) {
+	$new_args = (array) $defaults;
+
+	foreach ( $args as $key => $value ) {
+		if ( is_array( $value ) && isset( $new_args[ $key ] ) ) {
+			$new_args[ $key ] = azrcrv_e_recursive_parse_args( $value, $new_args[ $key ] );
+		}
+		else {
+			$new_args[ $key ] = $value;
+		}
+	}
+
+	return $new_args;
 }
 
 /**
@@ -190,23 +234,6 @@ function azrcrv_wa_admin_post_excerpt_change_labels($translation, $original){
 	}
 	
 	return $translation;
-}
-
-/**
- * Add label to post thumbnail meta box
- *
- * @since 1.0.0
- *
- */
-function azrcrv_wa_admin_post_thumbnail_add_label($content, $post_id, $thumbnail_id)
-{
-    $post = get_post($post_id);
-    if ($post->post_type == 'announcement') {
-        $content .= '<small><i>(Image should not be wider than your widget area)</i></small>';
-        return $content;
-    }
-
-    return $content;
 }
 
 /**
@@ -480,7 +507,8 @@ function azrcrv_wa_display_options(){
     }
 	
 	// Retrieve plugin configuration options from database
-	//$options = azrcrv_wa_get_option('azrcrv-wa');
+	$options = azrcrv_wa_get_option('azrcrv-wa');
+	
 	?>
 	<div id="azrcrv-wa-general" class="wrap azrcrv-wa">
 		<fieldset>
@@ -492,7 +520,7 @@ function azrcrv_wa_display_options(){
 			<?php } ?>
 			<form method="post" action="admin-post.php">
 				<input type="hidden" name="action" value="azrcrv_wa_save_options" />
-				<input name="page_options" type="hidden" value="integrate-to-twitter" />
+				<input name="page_options" type="hidden" value="width,height" />
 				
 				<!-- Adding security through hidden referrer field -->
 				<?php wp_nonce_field('azrcrv-wa', 'azrcrv-wa-nonce'); ?>
@@ -518,10 +546,78 @@ function azrcrv_wa_display_options(){
 				<p>
 					When creating widgets they can be added to one or more categories; when adding a widget, select the category to include.
 				</p>
+				
+				
+				<table class="form-table">
+					
+					<tr>
+						<th>
+							<h3><?php _e('Widget Defaults', 'widget-announcements'); ?></h3>
+						</th>
+					</tr>
+					
+					<tr>
+						<th scope="row"><label for="widget-width">
+							<?php esc_html_e('Width', 'widget-announcements'); ?></label>
+						</th>
+						<td>
+							<input name="widget-width" type="number" min="1" id="widget-width" value="<?php if (strlen($options['widget']['width']) > 0){ echo sanitize_text_field($options['widget']['width']); } ?>" class="small-text" />
+						</td>
+					</tr>
+					
+					<tr>
+						<th scope="row"><label for="widget-height">
+							<?php esc_html_e('Height', 'widget-announcements'); ?></label>
+						</th>
+						<td>
+							<input name="widget-height" type="number" min="1" id="widget-height" value="<?php if (strlen($options['widget']['height']) > 0){ echo sanitize_text_field($options['widget']['height']); } ?>" class="small-text" />
+						</td>
+					</tr>
+				
+				</table>
+				
+				<input type="submit" value="<? _e('Save Changes', 'widget-announcements'); ?>" class="button-primary"/>
+				
 			</form>
 		</fieldset>
 	</div>
 	<?php
+}
+
+/**
+ * Save settings.
+ *
+ * @since 1.0.0
+ *
+ */
+function azrcrv_wa_save_options(){
+	// Check that user has proper security level
+	if (!current_user_can('manage_options')){
+		wp_die(esc_html__('You do not have permissions to perform this action', 'widget-announcements'));
+	}
+	// Check that nonce field created in configuration form is present
+	if (! empty($_POST) && check_admin_referer('azrcrv-wa', 'azrcrv-wa-nonce')){
+	
+		// Retrieve original plugin options array
+		$options = get_option('azrcrv-wa');
+		
+		$option_name = 'widget-width';
+		if (isset($_POST[$option_name])){
+			$options['widget']['width'] = sanitize_text_field(intval($_POST[$option_name]));
+		}
+		
+		$option_name = 'widget-height';
+		if (isset($_POST[$option_name])){
+			$options['widget']['height'] = sanitize_text_field(intval($_POST[$option_name]));
+		}
+		
+		// Store updated options array to database
+		update_option('azrcrv-wa', $options);
+		
+		// Redirect the page to the configuration form that was processed
+		wp_redirect(add_query_arg('page', 'azrcrv-wa&settings-updated', admin_url('admin.php')));
+		exit;
+	}
 }
 
 /**
@@ -578,9 +674,13 @@ class azrcrv_wa_register_widget extends WP_Widget {
 	 */
 	function form($instance){
 		
-		$widget_category = (!empty($instance['category']) ? 
-							esc_attr($instance['category']) :
-							'Announcements');
+		$options = azrcrv_wa_get_option('azrcrv-wa');
+		
+		$widget_category = (!empty($instance['category']) ? esc_attr($instance['category']) : 'Announcements');
+		
+		$width = (!empty($instance['width']) ? esc_attr($instance['width']) : $options['widget']['width']);
+		
+		$height = (!empty($instance['height']) ? esc_attr($instance['height']) : $options['widget']['height']);
 		?>
 		
 		<p>
@@ -610,6 +710,22 @@ class azrcrv_wa_register_widget extends WP_Widget {
 			?>	
 			</label>
 		</p> 
+		
+		<p>
+			<label for="<?php echo 
+						$this->get_field_name('width'); ?>">
+			<?php _e('Width:', 'events'); ?>&nbsp;			
+			<input type="number" id="<?php echo $this->get_field_name('width'); ?>" name="<?php echo $this->get_field_name('width'); ?>" class="small-text" value="<?php echo $width; ?>" />
+			</label>
+		</p>
+		
+		<p>
+			<label for="<?php echo 
+						$this->get_field_name('height'); ?>">
+			<?php _e('Height:', 'events'); ?>&nbsp;			
+			<input type="number" id="<?php echo $this->get_field_name('height'); ?>" name="<?php echo $this->get_field_name('height'); ?>" class="small-text" value="<?php echo $height; ?>" />
+			</label>
+		</p>
 
 		<?php
 	}
@@ -624,6 +740,8 @@ class azrcrv_wa_register_widget extends WP_Widget {
 		$instance = $old_instance;
 		
 		$instance['category'] = strip_tags($new_instance['category']);
+		$instance['width'] = sanitize_text_field(intval($new_instance['width']));
+		$instance['height'] = sanitize_text_field(intval($new_instance['height']));
 
 		return $instance;
 	}
@@ -635,6 +753,13 @@ class azrcrv_wa_register_widget extends WP_Widget {
 	 *
 	 */
 	function widget ($args, $instance){
+		
+		$options = azrcrv_wa_get_option('azrcrv-wa');
+		
+		$width = (!empty($instance['width']) ? esc_attr($instance['width']) : $options['widget']['width']);
+		
+		$height = (!empty($instance['height']) ? esc_attr($instance['height']) : $options['widget']['height']);
+		
 		// Extract members of args array as individual variables
 		extract($args);
 		
@@ -653,13 +778,6 @@ class azrcrv_wa_register_widget extends WP_Widget {
 																	)
 																),
 											'post_status'   => 'publish',
-											/*
-											'date_query'    => array(
-																		'year'  => $today['year'],
-																		'month' => $today['mon'],
-																		'day'   => $today['day'],
-																	),
-																	*/
 										),
 							);
 		
@@ -705,9 +823,8 @@ class azrcrv_wa_register_widget extends WP_Widget {
 				// display widget body
 				echo '<p>'.$announcement->post_content.'</p>';
 				if (has_post_thumbnail($announcement->ID)){
-					$image = wp_get_attachment_image_src( get_post_thumbnail_id( $announcement->ID ), 'single-post-thumbnail' );
-					$image_alt = get_post_meta( get_post_thumbnail_id( $announcement->ID ), '_wp_attachment_image_alt', true);
-					echo '<div class="azrcrv-wa" style="width: '.$image[1].'px; "><img src="'.$image[0].'" alt="'.$image_alt.'" class="azrcrv-wa" /></div>';
+					$image = wp_get_attachment_image(get_post_thumbnail_id($announcement->ID), array($width,$height),'', array('class' => "img-responsive aligncenter", 'alt' => get_the_title()));
+					echo '<div class="azrcrv-wa">'.$image.'</div>';
 				}
 				echo '<p>'.$announcement->post_excerpt.'</p>';
 				

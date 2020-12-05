@@ -1,7 +1,7 @@
 === Widget Announcementa ===
 
 Description:	Announce holidays, events, achievements and notable historical figures in a widget.
-Version:		1.0.1
+Version:		1.1.0
 Tags:			widget
 Author:			azurecurve
 Author URI:		https://development.azurecurve.co.uk/
@@ -66,6 +66,10 @@ This plugin is developed for ClassicPress, but will likely work on WordPress.
 == Changelog ==
 
 # Changelog
+
+### [Version 1.1.0](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.1.0)
+ * Update handling of announcement image in widget.
+ * Add default size for announcement image in widget.
 
 ### [Version 1.0.1](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.0.1)
  * Fix bug with except label changing for all post types, not just the custom post type.
