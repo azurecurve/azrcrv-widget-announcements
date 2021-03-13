@@ -1,12 +1,12 @@
 === Widget Announcementa ===
 
 Description:	Announce holidays, events, achievements and notable historical figures in a widget.
-Version:		1.1.1
+Version:		1.2.0
 Tags:			widget
 Author:			azurecurve
 Author URI:		https://development.azurecurve.co.uk/
 Plugin URI:		https://development.azurecurve.co.uk/classicpress-plugins/widget-announcements/
-Download link:	https://github.com/azurecurve/azrcrv-widget-announcements/releases/download/v1.1.1/azrcrv-widget-announcements.zip
+Download link:	https://github.com/azurecurve/azrcrv-widget-announcements/releases/download/v1.2.0/azrcrv-widget-announcements.zip
 Donate link:	https://development.azurecurve.co.uk/support-development/
 Requires PHP:	5.6
 Requires:		1.0.0
@@ -35,6 +35,10 @@ Announcements can be made:
  * Annually on the nth day of the month (e.g. 4th Thursday November)
  
 Announcements are created as a custom post type and can have details, an image and additional text after the image.
+
+Integrates with [To Twitter](https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/) from [azurecurve](https://development.azurecurve.co.uk/classicpress-plugins/) for automatic tweeting of announcement each time the announcement is made and a retweet after a specified amount of time.
+
+The featured image will be sent to Twitter if no media images are attached.
 
 == Installation ==
 
@@ -67,6 +71,10 @@ This plugin is developed for ClassicPress, but will likely work on WordPress.
 
 # Changelog
 
+### [Version 1.2.0](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.2.0)
+ * Add integration with [To Twitter](https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/) from [azurecurve](https://development.azurecurve.co.uk/classicpress-plugins/) for automatic tweeting and retweeting of announcements.
+ * Fix bug with population of default options.
+ 
 ### [Version 1.1.1](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.1.1)
  * Fix incorrect download link.
  
@@ -75,7 +83,7 @@ This plugin is developed for ClassicPress, but will likely work on WordPress.
  * Add default size for announcement image in widget.
 
 ### [Version 1.0.1](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.0.1)
- * Fix bug with except label changing for all post types, not just the custom post type.
+ * Fix bug with excerpt label changing for all post types, not just the custom post type.
 
 ### [Version 1.0.0](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.0.0)
  * Initial release.
@@ -89,7 +97,7 @@ This plugin is developed for ClassicPress, but will likely work on WordPress.
 Some of the top plugins available from **azurecurve** are:
 * [Add Twitter Cards](https://development.azurecurve.co.uk/classicpress-plugins/add-twitter-cards/)
 * [Breadcrumbs](https://development.azurecurve.co.uk/classicpress-plugins/breadcrumbs/)
-* [Series Index](https://development.azurecurve.co.uk/classicpress-plugins/series-index/)
+* [SMTP](https://development.azurecurve.co.uk/classicpress-plugins/smtp/)
 * [To Twitter](https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/)
 * [Theme Switcher](https://development.azurecurve.co.uk/classicpress-plugins/theme-switcher/)
 * [Toggle Show/Hide](https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/)

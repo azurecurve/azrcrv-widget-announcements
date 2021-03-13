@@ -1,0 +1,12 @@
+.azrcrv_wa_tabs{
+	padding:15px !important;
+}
+.azrcrv_wa_tabs.invisible{
+	display:none;
+}
+.azrcrv_wa_horiz{
+	margin:0 0 0 10px;
+}
+img.azrcrv-wa{
+	border: none;
+}

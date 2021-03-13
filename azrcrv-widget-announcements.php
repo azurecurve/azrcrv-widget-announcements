@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------------------
  * Plugin Name: Widget Announcements
  * Description: Announce holidays, events, achievements and notable historical figures in a widget.
- * Version: 1.1.1
+ * Version: 1.2.0
  * Author: azurecurve
  * Author URI: https://development.azurecurve.co.uk/classicpress-plugins/
  * Plugin URI: https://development.azurecurve.co.uk/classicpress-plugins/azrcrv-widget-announcements/
@@ -35,22 +35,39 @@ require_once(dirname(__FILE__).'/libraries/updateclient/UpdateClient.class.php')
  * @since 1.0.0
  *
  */
+// register activation hook
+register_activation_hook(__FILE__, 'azrcrv_wa_create_cron_hourly');
+// register deactivation hook
+register_deactivation_hook( __FILE__, 'azrcrv_wa_clear_cron_hourly' );
+
 // add actions
 add_action('admin_menu', 'azrcrv_wa_create_admin_menu');
 add_action('init', 'azrcrv_wa_create_cust_taxonomy_for_custom_post');
 add_action('init', 'azrcrv_wa_create_custom_post_type');
+add_action('add_meta_boxes', 'azrcrv_wa_create_tweet_metabox');
+add_action('save_post', 'azrcrv_wa_save_tweet_metabox', 11, 2);
+add_action('add_meta_boxes', 'azrcrv_wa_create_tweet_history_metabox');
 add_action('admin_menu', 'azrcrv_wa_add_sidebar_metabox');
 add_action('save_post', 'azrcrv_wa_save_sidebar_metabox', 10, 1);
+add_action('admin_menu', 'azrcrv_wa_add_to_twitter_sidebar_metabox');
+add_action('save_post', 'azrcrv_wa_save_to_twitter_sidebar_metabox', 10, 1);
+add_action('wp_insert_post', 'azrcrv_wa_check_tweet', 12, 2);
 add_action('plugins_loaded', 'azrcrv_wa_load_languages');
 add_action('wp_enqueue_scripts', 'azrcrv_wa_load_css');
 add_action('widgets_init', 'azrcrv_wa_create_widget');
+add_action('current_screen', 'azrcrv_wa_current_screen_callback');
 add_action('admin_post_azrcrv_wa_save_options', 'azrcrv_wa_save_options');
+add_action('azrcrv_wa_cron_hourly_check', 'azrcrv_wa_perform_cron_check');
+add_action('azrcrv_wa_cron_tweet_announcement', 'azrcrv_wa_perform_tweet_announcement', 10, 2);
+add_action('transition_post_status', 'azrcrv_wa_post_status_transition', 13, 3);
+add_action('admin_enqueue_scripts', 'azrcrv_wa_load_jquery');
+add_action('admin_enqueue_scripts', 'azrcrv_wa_media_uploader');
+add_action('admin_enqueue_scripts', 'azrcrv_wa_load_admin_style');
 
 // add filters
 add_filter('plugin_action_links', 'azrcrv_wa_add_plugin_action_link', 10, 2);
 add_filter('codepotent_update_manager_image_path', 'azrcrv_wa_custom_image_path');
 add_filter('codepotent_update_manager_image_url', 'azrcrv_wa_custom_image_url');
-add_action('current_screen', 'azrcrv_wa_current_screen_callback');
 
 /**
  * Custom plugin image path.
@@ -84,7 +101,7 @@ function azrcrv_wa_custom_image_url($url){
  * @since 1.0.0
  *
  */
-function azrcrv_wa_load_languages() {
+function azrcrv_wa_load_languages(){
     $plugin_rel_path = basename(dirname(__FILE__)).'/languages';
     load_plugin_textdomain('widget-announcements', false, $plugin_rel_path);
 }
@@ -100,6 +117,45 @@ function azrcrv_wa_load_css(){
 }
 
 /**
+ * Load media uploaded.
+ *
+ * @since 1.0.0
+ *
+ */
+function azrcrv_wa_load_jquery(){
+	wp_enqueue_script('azrcrv-wa-jquery', plugins_url('assets/jquery/jquery.js', __FILE__), array('jquery'));
+}
+
+/**
+ * Load media uploaded.
+ *
+ * @since 1.0.0
+ *
+ */
+function azrcrv_wa_media_uploader(){
+	global $post_type;
+	
+	if(function_exists('wp_enqueue_media')){
+		wp_enqueue_media();
+	}else{
+		wp_enqueue_script('media-upload');
+		wp_enqueue_script('thickbox');
+		wp_enqueue_style('thickbox');
+	}
+}
+
+/**
+ * Load admin css.
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_load_admin_style(){
+    wp_register_style('azrcrv-wa-admin-css', plugins_url('assets/css/admin.css', __FILE__), false, '1.0.0');
+    wp_enqueue_style( 'azrcrv-wa-admin-css' );
+}
+
+/**
  * Get options including defaults.
  *
  * @since 1.1.0
@@ -112,6 +168,16 @@ function azrcrv_wa_get_option($option_name){
 											'width' => 300,
 											'height' => 300,
 										),
+						'to-twitter' => array(
+												'integrate' => 1,
+												'tweet' => 0,
+												'retweet' => 0,
+												'retweet-prefix' => 'ICYMI',
+												'tweet-format' => '%t %h',
+												'tweet-time' => '10:00',
+												'retweet-time' => '16:00',
+												'use-featured-image' => 1,
+											),
 					);
 
 	$options = get_option($option_name, $defaults);
@@ -133,7 +199,7 @@ function azrcrv_wa_recursive_parse_args( $args, $defaults ) {
 
 	foreach ( $args as $key => $value ) {
 		if ( is_array( $value ) && isset( $new_args[ $key ] ) ) {
-			$new_args[ $key ] = azrcrv_e_recursive_parse_args( $value, $new_args[ $key ] );
+			$new_args[ $key ] = azrcrv_wa_recursive_parse_args( $value, $new_args[ $key ] );
 		}
 		else {
 			$new_args[ $key ] = $value;
@@ -237,6 +303,272 @@ function azrcrv_wa_admin_post_excerpt_change_labels($translation, $original){
 }
 
 /**
+ * Create the post tweet metabox
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_create_tweet_metabox() {
+	
+	$to_twitter_enabled = azrcrv_wa_is_plugin_active('azrcrv-to-twitter/azrcrv-to-twitter.php');
+	
+	if ($to_twitter_enabled){
+		
+		$options = azrcrv_wa_get_option('azrcrv-wa');
+		
+		if ($options['to-twitter']['integrate'] == 1){
+			add_meta_box(
+				'azrcrv_wa_tweet_metabox', // Metabox ID
+				'Tweet', // Title to display
+				'azrcrv_wa_render_tweet_metabox', // Function to call that contains the metabox content
+				'widget-announcement', // Post type to display metabox on
+				'normal', // Where to put it (normal = main colum, side = sidebar, etc.)
+				'default' // Priority relative to other metaboxes
+			);
+		}
+	}
+}
+
+/**
+ * Render the post tweet metabox markup
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_render_tweet_metabox() {
+	// Variables
+	global $post; // Get the current post data
+	$post_tweet = get_post_meta($post->ID, '_azrcrv_wa_post_tweet', true); // Get the saved values
+	$post_media = get_post_meta($post->ID, '_azrcrv_wa_post_tweet_media', true); // Get the saved values
+	
+	?>
+
+		<fieldset>
+			<div>
+				<table style="width: 100%; border-collapse: collapse;">
+					<tr>
+						<td style="width: 100%;">
+							<p>
+								<input
+									type="text"
+									name="post_tweet"
+									id="post_tweet"
+									class="large-text"
+									value="<?php echo esc_attr($post_tweet); ?>"
+								>
+							</p>
+							<p>
+								<?php printf(__('To regenerate tweet blank the field and update post.', 'widget-announcements'), '%s'); ?>
+							</p>
+		
+							<p>
+								<?php
+									$no_image = plugin_dir_url(__FILE__).'assets/images/no-image.svg';
+									$tweet_media = array();
+									for ($media_loop = 0; $media_loop <= 3; $media_loop++){
+										if (isset($post_media[$media_loop])){
+											$tweet_media[$media_loop] = array(
+																				'image' => $post_media[$media_loop],
+																				'value' => $post_media[$media_loop],
+																			);
+										}else{
+											$tweet_media[$media_loop] = array(
+																				'image' => $no_image,
+																				'value' => '',
+																			);
+										}
+									}
+								?>
+								
+								<p style="clear: both; " />
+								
+								<div style="width: 100%; display: block; ">
+									<div style="width: 100%; display: block; padding-bottom: 12px; ">
+										<?php _e('Select up to four images to include with tweet; if the <em>Use Featured Image</em> option is marked and a featured image set, only the first three media images from below will be used.', 'widget-announcements'); ?>
+									</div>
+									<?php
+										foreach ($tweet_media AS $media_key => $media){
+											$key = $media_key + 1;
+											echo '<div style="float: left; width: 170px; text-align: center; ">';
+												echo '<img src="'.$media['image'].'" id="tweet-image-'.$key.'" style="width: 160px;"><br />';
+												echo '<input type="hidden" name="tweet-selected-image-'.$key.'" id="tweet-selected-image-'.$key.'" value="'.$media['value'].'" class="regular-text" />';
+												echo '<input type="button" id="azrcrv-wa-upload-image-'.$key.'" class="button upload" value="'.__('Upload', 'widget-announcements').'" />&nbsp;';
+												echo '<input type="button" id="azrcrv-wa-remove-image-'.$key.'" class="button remove" value="'.__( 'Remove', 'widget-announcements').'" />';
+											echo '</div>';
+										}
+									?>
+								</div>
+								
+								<p style="clear: both; padding-bottom: 6px; " />
+							</p>
+						<td>
+					</tr>
+				</table>
+			</div>
+		</fieldset>
+
+	<?php
+	// Security field
+	// This validates that submission came from the
+	// actual dashboard and not the front end or
+	// a remote server.
+	wp_nonce_field('azrcrv_wa_form_tweet_metabox_nonce', 'azrcrv_wa_form_tweet_metabox_process');
+}
+
+/**
+ * Save the post tweet metabox
+ * @param  Number $post_id The post ID
+ * @param  Array  $post    The post data
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_save_tweet_metabox( $post_id, $post ) {
+
+	// Verify that our security field exists. If not, bail.
+	if ( !isset( $_POST['azrcrv_wa_form_tweet_metabox_process'] ) ) return;
+
+	// Verify data came from edit/dashboard screen
+	if ( !wp_verify_nonce( $_POST['azrcrv_wa_form_tweet_metabox_process'], 'azrcrv_wa_form_tweet_metabox_nonce' ) ) {
+		return $post->ID;
+	}
+
+	// Verify user has permission to edit post
+	if ( !current_user_can( 'edit_post', $post->ID )) {
+		return $post->ID;
+	}
+	
+	$tt_options = azrcrv_tt_get_option('azrcrv-tt');
+	$options = azrcrv_wa_get_option('azrcrv-wa');
+	
+	if (strlen($_POST['post_tweet']) == 0){
+		
+		$autopost_tweet = get_post_meta($post->ID, '_azrcrv_wa_tweet', true);
+		$hashtags_string = $autopost_tweet['hashtags'];
+		
+		$tweet = $post->post_title;
+		
+		$post_tweet = $options['to-twitter']['tweet-format'];
+		
+		if (!isset($post_tweet)||$post_tweet == ''){
+			$post_tweet = '%t %h';
+		}
+		
+		$post_tweet = str_replace('%t', $tweet, $post_tweet);
+		$post_tweet = str_replace('%h', $hashtags_string, $post_tweet);
+		
+		if ($tt_options['prefix_tweets_with_dot'] == 1){
+			if (substr($post_tweet, 0, 1) == '@'){
+				$post_tweet = '.'.$post_tweet;
+			}
+		}
+	}else{
+		/**
+		 * Sanitize the submitted data
+		 */
+		$post_tweet = sanitize_text_field( $_POST['post_tweet'] );
+	}
+	
+	$media = array();
+	for ($media_loop = 1; $media_loop <= 4; $media_loop++){
+		if(strlen($_POST['tweet-selected-image-'.$media_loop]) >= 1){
+			$media[] = $_POST['tweet-selected-image-'.$media_loop];
+		}
+	}
+	
+	// Save our submissions to the database
+	update_post_meta($post->ID, '_azrcrv_wa_post_tweet', $post_tweet);
+	update_post_meta($post->ID, '_azrcrv_wa_post_tweet_media', $media);
+
+}
+
+/**
+ * Create the post tweet history metabox
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_create_tweet_history_metabox() {
+	
+	global $post; // Get the current post data
+	
+	$to_twitter_enabled = azrcrv_wa_is_plugin_active('azrcrv-to-twitter/azrcrv-to-twitter.php');
+	
+	if ($to_twitter_enabled){
+		if(metadata_exists('post', $post->ID, '_azrcrv_tt_tweet_history')) {
+		
+			$options = azrcrv_wa_get_option('azrcrv-wa');
+			
+			if ($options['to-twitter']['integrate'] == 1){
+				add_meta_box(
+					'azrcrv_wa_tweet_history_metabox', // Metabox ID
+					'Tweet History', // Title to display
+					'azrcrv_wa_render_tweet_history_metabox', // Function to call that contains the metabox content
+					'widget-announcement', // Post type to display metabox on
+					'normal', // Where to put it (normal = main colum, side = sidebar, etc.)
+					'default' // Priority relative to other metaboxes
+				);
+			}
+		}
+	}
+}
+
+/**
+ * Render the post tweet history metabox markup
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_render_tweet_history_metabox() {
+	// Variables
+	global $post; // Get the current post data
+	
+	?>
+
+		<fieldset>
+			<div>
+				<table style="width: 100%; border-collapse: collapse;">
+					<tr>
+						<td style="width: 100%;">
+							<p>
+							<?php
+							if(metadata_exists('post', $post->ID, '_azrcrv_tt_tweet_history')) {
+								echo '<strong>'.__('Previous Tweets', 'widget-announcements').'</strong><br />';
+								foreach(array_reverse(get_post_meta($post->ID, '_azrcrv_tt_tweet_history', true )) as $key => $tweet){
+									if (is_array($tweet)){ $tweet_detail = $tweet['tweet']; }else{ $tweet_detail = $tweet; }
+									
+									if (isset($tweet['key'])){ $tweet_date = $tweet['key']; }else{ $tweet_date = strtotime($key); }
+									$tweet_date = date('d/m/Y H:i', $tweet_date);
+									
+									if ($tweet['status'] == ''){
+										$status = '';
+									}elseif ($tweet['status'] == 200){
+										$status = ' '.$tweet['status'].' ';
+									}else{
+										$status = ' <span style="color: red; font-weight:900;">'.$tweet['status'].'</span> ';
+									}
+									
+									if (isset($tweet['author']) AND strlen($tweet['author']) > 0){
+										$tweet_link = '<a href="https://twitter.com/'.$tweet['author'].'/status/'.$tweet['tweet_id'].'" style="text-decoration: none; "><span class="dashicons dashicons-twitter"></span></a>&nbsp';
+									}else{
+										$tweet_link = '';
+									}
+									
+									echo '•&nbsp;'.$tweet_date.' - '.$status.' - <em>'.$tweet_link.$tweet_detail.'</em><br />';
+								}	
+							}
+							?>
+							</p>
+						<td>
+					</tr>
+				</table>
+			</div>
+		</fieldset>
+
+	<?php
+}
+
+/**
  * Add post metabox to sidebar.
  *
  * @since 1.0.0
@@ -256,10 +588,10 @@ function azrcrv_wa_generate_sidebar_metabox(){
 	
 	global $post;
 	
-	wp_nonce_field(basename(__FILE__), 'azrcrv-wa-nonce');
+	wp_nonce_field(basename(__FILE__), 'azrcrv-wa-sidebar-nonce');
 	
 	$repeat = get_post_meta($post->ID, '_azrcrv_wa_repeat', true);
-		
+	
 	?>
 	
 	<fieldset>
@@ -413,7 +745,7 @@ function azrcrv_wa_generate_sidebar_metabox(){
  */
 function azrcrv_wa_save_sidebar_metabox($post_id){
 	
-	if(! isset($_POST[ 'azrcrv-wa-nonce' ]) || ! wp_verify_nonce($_POST[ 'azrcrv-wa-nonce' ], basename(__FILE__))){
+	if(! isset($_POST[ 'azrcrv-wa-sidebar-nonce' ]) || ! wp_verify_nonce($_POST[ 'azrcrv-wa-sidebar-nonce' ], basename(__FILE__))){
 		return $post_id;
 	}
 	
@@ -509,6 +841,8 @@ function azrcrv_wa_display_options(){
 	// Retrieve plugin configuration options from database
 	$options = azrcrv_wa_get_option('azrcrv-wa');
 	
+	$to_twitter_enabled = azrcrv_wa_is_plugin_active('azrcrv-to-twitter/azrcrv-to-twitter.php');
+	
 	?>
 	<div id="azrcrv-wa-general" class="wrap azrcrv-wa">
 		<fieldset>
@@ -546,42 +880,207 @@ function azrcrv_wa_display_options(){
 				<p>
 					When creating widgets they can be added to one or more categories; when adding a widget, select the category to include.
 				</p>
+				<p>
+					<?php printf(__('Integration with the %s plugin from %s can be enabled to send announcements to Twitter.'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/">To Twitter</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?>
+				</p>
 				
+				<?php
+				if ($to_twitter_enabled AND $options['to-twitter']['integrate'] == 1){
 				
-				<table class="form-table">
-					
-					<tr>
-						<th>
-							<h3><?php _e('Widget Defaults', 'widget-announcements'); ?></h3>
-						</th>
-					</tr>
-					
-					<tr>
-						<th scope="row"><label for="widget-width">
-							<?php esc_html_e('Width', 'widget-announcements'); ?></label>
-						</th>
-						<td>
-							<input name="widget-width" type="number" min="1" id="widget-width" value="<?php if (strlen($options['widget']['width']) > 0){ echo sanitize_text_field($options['widget']['width']); } ?>" class="small-text" />
-						</td>
-					</tr>
-					
-					<tr>
-						<th scope="row"><label for="widget-height">
-							<?php esc_html_e('Height', 'widget-announcements'); ?></label>
-						</th>
-						<td>
-							<input name="widget-height" type="number" min="1" id="widget-height" value="<?php if (strlen($options['widget']['height']) > 0){ echo sanitize_text_field($options['widget']['height']); } ?>" class="small-text" />
-						</td>
-					</tr>
+					if(isset($_GET['i'])){
+							$tab1active = '';
+							$tab2active = 'nav-tab-active';
+							$tab1visibility = 'invisible';
+							$tab2visibility = '';
+						}else{
+							$tab1active = 'nav-tab-active';
+							$tab2active = '';
+							$tab1visibility = '';
+							$tab2visibility = 'invisible';
+						}
+					?>
+					<h2 class="nav-tab-wrapper nav-tab-wrapper-azrcrv-wa">
+						<a class="nav-tab <?php echo $tab1active; ?>" data-item=".tabs-1" href="#tabs-1"><?php _e('Settings', 'widget-announcements') ?></a>
+						<a class="nav-tab <?php echo $tab2active; ?>" data-item=".tabs-2" href="#tabs-2"><?php _e('To Twitter Integration', 'widget-announcements') ?></a>
+					</h2>
+					<div>
+						<div class="azrcrv_wa_tabs tabs-1 <?php echo $tab1visibility; ?>">
+				<?php } ?>
 				
-				</table>
+							<table class="form-table">
+								
+								<tr>
+									<th>
+										<h3><?php _e('Widget Defaults', 'widget-announcements'); ?></h3>
+									</th>
+								</tr>
+								
+								<tr>
+									<th scope="row"><label for="widget-width">
+										<?php esc_html_e('Width', 'widget-announcements'); ?></label>
+									</th>
+									<td>
+										<input name="widget-width" type="number" min="1" id="widget-width" value="<?php if (strlen($options['widget']['width']) > 0){ echo sanitize_text_field($options['widget']['width']); } ?>" class="small-text" /> px
+									</td>
+								</tr>
+								
+								<tr>
+									<th scope="row"><label for="widget-height">
+										<?php esc_html_e('Height', 'widget-announcements'); ?></label>
+									</th>
+									<td>
+										<input name="widget-height" type="number" min="1" id="widget-height" value="<?php if (strlen($options['widget']['height']) > 0){ echo sanitize_text_field($options['widget']['height']); } ?>" class="small-text" /> px
+									</td>
+								</tr>
+								
+								<tr>
+									<th>
+										<h3><?php _e('To-Twitter Integration', 'widget-announcements'); ?></h3>
+									</th>
+								</tr>
+								
+								<tr>
+									<th scope="row">
+										<label for="to-twitter-integration">
+											<?php esc_html_e('Enable integration', 'widget-announcements'); ?>
+										</label>
+									</th>
+									<td>
+										<?php
+											if ($to_twitter_enabled){ ?>
+												<label for="to-twitter-integration"><input name="to-twitter-integration" type="checkbox" id="to-twitter-integration" value="1" <?php checked('1', $options['to-twitter']['integrate']); ?> /><?php printf(esc_html__('Enable integration with %s from %s?', 'widget-announcements'), '<a href="admin.php?page=azrcrv-tt">To Twitter</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?></label>
+											<?php }else{
+												printf(esc_html__('%s from %s not installed/activated.', 'widget-announcements'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/">To Twitter</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>');
+											}
+										?>
+									</td>
+								</tr>
+							
+							</table>
+							
+				<?php if ($to_twitter_enabled AND $options['to-twitter']['integrate'] == 1){ ?>
+						</div>
+				
+					<div class="azrcrv_wa_tabs <?php echo $tab2visibility; ?> tabs-2">
+				
+							<table class="form-table">
+						
+								<tr>
+									<th scope="row">
+										<label for="to-twitter-tweet">
+											<?php esc_html_e('Tweet', 'widget-announcements'); ?>
+										</label>
+									</th>
+									<td>
+										<label for="to-twitter-tweet"><input name="to-twitter-tweet" type="checkbox" id="to-twitter-tweet" value="1" <?php checked('1', $options['to-twitter']['tweet']); ?> /><?php esc_html_e('Send tweet at below time?', 'widget-announcements'); ?></label>
+									</td>
+								</tr>
+								
+								<tr>
+									<th scope="row">
+										<label for="to-twitter-tweet-time">
+											<?php esc_html_e('Tweet Time', 'widget-announcements'); ?>
+										</label>
+									</th>
+									<td>										
+										<input type="time" id="to-twitter-tweet-time" name="to-twitter-tweet-time" value="<?php esc_html_e($options['to-twitter']['tweet-time']); ?>" required />
+									</td>
+								</tr>
+								
+								<tr>
+									<th scope="row">
+										<label for="to-twitter-retweet">
+											<?php esc_html_e('Reweet', 'widget-announcements'); ?>
+										</label>
+									</th>
+									<td>
+										<label for="to-twitter-retweet"><input name="to-twitter-retweet" type="checkbox" id="to-twitter-retweet" value="1" <?php checked('1', $options['to-twitter']['retweet']); ?> /><?php esc_html_e('Send retweet at below time?', 'widget-announcements'); ?></label>
+									</td>
+								</tr>
+								
+								<tr>
+									<th scope="row">
+										<label for="to-twitter-retweet-time">
+											<?php esc_html_e('Tweet Time', 'widget-announcements'); ?>
+										</label>
+									</th>
+									<td>										
+										<input type="time" id="to-twitter-retweet-time" name="to-twitter-retweet-time" value="<?php esc_html_e($options['to-twitter']['retweet-time']); ?>" required />
+									</td>
+								</tr>
+								
+								<tr>
+									<th scope="row"><label for="to-twitter-retweet-prefix">
+										<?php esc_html_e('Retweet Prefix', 'widget-announcements'); ?></label>
+									</th>
+									<td>
+										<input name="to-twitter-retweet-prefix" type="text" id="to-twitter-retweet-prefix" value="<?php if (strlen($options['to-twitter']['retweet-prefix']) > 0){ echo sanitize_text_field($options['to-twitter']['retweet-prefix']); } ?>" class="regular-text" />
+									</td>
+								</tr>
+								
+								<tr>
+									<th scope="row"><label for="to-twitter-tweet-format">
+										<?php esc_html_e('Tweet Format', 'widget-announcements'); ?></label>
+									</th>
+									<td>
+										<input name="to-twitter-tweet-format" type="text" id="to-twitter-tweet-format" value="<?php if (strlen($options['to-twitter']['tweet-format']) > 0){ echo sanitize_text_field($options['to-twitter']['tweet-format']); } ?>" class="regular-text" />
+									</td>
+								</tr>
+								
+								<tr>
+									<th scope="row">
+										<label for="to-twitter-use-featured-image">
+											<?php esc_html_e('Use Featured Imge', 'widget-announcements'); ?>
+										</label>
+									</th>
+									<td>
+										<label for="to-twitter-use-featured-image"><input name="to-twitter-use-featured-image" type="checkbox" id="to-twitter-use-featured-image" value="1" <?php checked('1', $options['to-twitter']['use-featured-image']); ?> /><?php esc_html__('Use featured image? Only three other media images can be included in the tweet.', 'widget-announcements'); ?></label>
+									</td>
+								</tr>
+								
+							</table>
+					</div>
+				</div>
+				<?php } ?>
 				
 				<input type="submit" value="<? _e('Save Changes', 'widget-announcements'); ?>" class="button-primary"/>
 				
 			</form>
 		</fieldset>
 	</div>
+	
+	<div>
+		<p>
+		&nbsp;
+		</p>
+		<p>
+			<label for="additional-plugins">
+				<?php printf(esc_html__('This plugin integrates with the following plugins from %s:', 'widget-announcements'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?>
+			</label>
+			<ul class='azrcrv-plugin-index'>
+				<li>
+					<?php
+					if ($to_twitter_enabled){
+						echo '<a href="admin.php?page=azrcrv-tt" class="azrcrv-plugin-index">To Twitter</a>';
+					}else{
+						echo '<a href="https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/" class="azrcrv-plugin-index">To Twitter</a>';
+					}
+					?>
+				</li>
+			</ul>
+		</p>
+	</div>
 	<?php
+}
+
+/**
+ * Check if other plugin active.
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_is_plugin_active($plugin){
+    return in_array($plugin, (array) get_option('active_plugins', array()));
 }
 
 /**
@@ -600,6 +1099,7 @@ function azrcrv_wa_save_options(){
 	
 		// Retrieve original plugin options array
 		$options = get_option('azrcrv-wa');
+		$original_options = $options;
 		
 		$option_name = 'widget-width';
 		if (isset($_POST[$option_name])){
@@ -611,13 +1111,108 @@ function azrcrv_wa_save_options(){
 			$options['widget']['height'] = sanitize_text_field(intval($_POST[$option_name]));
 		}
 		
+		$option_name = 'to-twitter-integration';
+		if (isset($_POST[$option_name])){
+			$options['to-twitter']['integrate'] = 1;
+		}else{
+			$options['to-twitter']['integrate'] = 0;
+		}
+		
+		$option_name = 'to-twitter-tweet';
+		if (isset($_POST[$option_name])){
+			$options['to-twitter']['tweet'] = 1;
+		}else{
+			$options['to-twitter']['tweet'] = 0;
+		}
+		
+		$option_name = 'to-twitter-tweet-time';
+		if (isset($_POST[$option_name])){
+			$tweet_time = preg_replace("([^0-9-:-])", "", $_POST[$option_name]);
+			$options['to-twitter']['tweet-time'] = sanitize_text_field($tweet_time);
+		}
+		
+		$option_name = 'to-twitter-retweet';
+		if (isset($_POST[$option_name])){
+			$options['to-twitter']['retweet'] = 1;
+		}else{
+			$options['to-twitter']['retweet'] = 0;
+		}
+		
+		$option_name = 'to-twitter-retweet-time';
+		if (isset($_POST[$option_name])){
+			$retweet_time = preg_replace("([^0-9-:-])", "", $_POST[$option_name]);
+			$options['to-twitter']['retweet-time'] = sanitize_text_field($retweet_time);
+		}
+		
+		$option_name = 'to-twitter-retweet-prefix';
+		if (isset($_POST[$option_name])){
+			$options['to-twitter']['retweet-prefix'] = sanitize_text_field($_POST[$option_name]);
+		}
+		
+		$option_name = 'to-twitter-tweet-format';
+		if (isset($_POST[$option_name])){
+			$options['to-twitter']['tweet-format'] = sanitize_text_field($_POST[$option_name]);
+		}
+		
+		$option_name = 'to-twitter-use-featured-image';
+		if (isset($_POST[$option_name])){
+			$options['to-twitter']['use-featured-image'] = 1;
+		}else{
+			$options['to-twitter']['use-featured-image'] = 0;
+		}
+		
 		// Store updated options array to database
 		update_option('azrcrv-wa', $options);
 		
+		if ($options['to-twitter']['integrate'] == 1){
+			wp_schedule_event(strtotime('00:01:00'), 'hourly', 'azrcrv_wa_cron_hourly_check');
+		}else{
+			wp_clear_scheduled_hook("azrcrv_wa_cron_hourly_check");
+		}
+		
+		$response = '';
+		if ($original_options['to-twitter']['integrate'] == 0 AND $options['to-twitter']['integrate'] == 1){
+			$response = '&i';
+		}
 		// Redirect the page to the configuration form that was processed
-		wp_redirect(add_query_arg('page', 'azrcrv-wa&settings-updated', admin_url('admin.php')));
+		wp_redirect(add_query_arg('page', 'azrcrv-wa&settings-updated'.$response, admin_url('admin.php')));
 		exit;
 	}
+}
+
+/**
+ * Post status changes to "publish".
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_post_status_transition($new_status, $old_status, $post){
+	
+	$options = azrcrv_wa_get_option('azrcrv-wa');
+	$to_twitter_enabled = azrcrv_wa_is_plugin_active('azrcrv-to-twitter/azrcrv-to-twitter.php');
+	
+	if ($post->post_type == 'widget-announcement' AND $to_twitter_enabled AND $options['to-twitter']['integrate'] == 1 AND $new_status == 'publish' AND $old_status != 'publish') {
+		azrcrv_wa_check_tweet($post->ID, $post);
+    }
+	
+}
+
+/**
+ * Autopost tweet for post when status changes to "publish".
+ *
+ * @since 1.0.0
+ *
+ */
+function azrcrv_wa_check_tweet($post_id, $post){
+    remove_action('wp_insert_post', 'updated_to_publish', 10, 2);
+	
+	$options = azrcrv_wa_get_option('azrcrv-wa');
+	$to_twitter_enabled = azrcrv_wa_is_plugin_active('azrcrv-to-twitter/azrcrv-to-twitter.php');
+	
+	if ($post->post_type == 'widget-announcement' AND $to_twitter_enabled AND $options['to-twitter']['integrate'] == 1 AND $post->post_status == 'publish'){
+		azrcrv_wa_check_tweet_today($post_id , $post->post_date);
+	}
+	
 }
 
 /**
@@ -832,6 +1427,370 @@ class azrcrv_wa_register_widget extends WP_Widget {
 				echo $after_widget;
 			}
 		}
+	}
+}
+
+/**
+ * Add post metabox to sidebar.
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_add_to_twitter_sidebar_metabox(){
+	
+	$to_twitter_enabled = azrcrv_wa_is_plugin_active('azrcrv-to-twitter/azrcrv-to-twitter.php');
+	
+	if ($to_twitter_enabled)){
+		
+		$options = azrcrv_wa_get_option('azrcrv-wa');
+		
+		if ($options['to-twitter']['integrate'] == 1){
+			add_meta_box('azrcrv-wa-to-twitter-box', esc_html__('Autopost Tweet', 'widget-announcements'), 'azrcrv_wa_generate_to_twitter_sidebar_metabox', 'widget-announcement', 'side', 'default');
+		}
 		
 	}
+}
+
+/**
+ * Generate post sidebar metabox.
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_generate_to_twitter_sidebar_metabox(){
+	
+	global $post;
+	
+	$options = azrcrv_wa_get_option('azrcrv-wa');
+	
+	$autopost_tweet = get_post_meta($post->ID, '_azrcrv_wa_tweet', true);
+	
+	if (is_array($autopost_tweet)){
+		$use_featured_image = $autopost_tweet['use-featured-image'];
+		$tweet = $autopost_tweet['tweet'];
+		$tweet_time = $autopost_tweet['tweet-time'];
+		$retweet = $autopost_tweet['retweet'];
+		$retweet_time = $autopost_tweet['retweet-time'];
+		$hashtags = $autopost_tweet['hashtags'];
+	}else{
+		$use_featured_image = $options['to-twitter']['use-featured-image'];
+		$tweet = $options['to-twitter']['tweet'];
+		$retweet = $options['to-twitter']['retweet'];
+		$tweet_time = $options['to-twitter']['tweet-time'];
+		$retweet_time = $options['to-twitter']['retweet-time'];
+		$hashtags = '';
+	}
+	
+	echo '<p class="azrcrv-wa-tweet">';
+		wp_nonce_field(basename(__FILE__), 'azrcrv-wa-to-twitter-sidebar-nonce');
+		
+		if ($use_featured_image == 1){
+			$checked = 'checked="checked"';
+		}else{
+			$checked = '';
+		}
+		echo '<p>
+				<label>
+					<input type="checkbox" name="use-featured-image" '.$checked.' />  '.__('Use featured image as tweet media image 1?', 'widget-announcements').'
+				</label>';
+		echo '</p>';
+		
+		if ($tweet == 1){
+			$checked = 'checked="checked"';
+		}else{
+			$checked = '';
+		}
+		echo '<p><label><input type="checkbox" name="tweet" '.$checked.' />  '.__('Tweet announcement?', 'widget-announcements').'</label></p>
+		
+		<p>
+			'.__('Tweet Time: ', 'widget-announcements').'
+			
+			<input type="time" id="tweet-time" name="tweet-time" value="'.esc_html($tweet_time).'" required />
+		</p>';
+		
+		if ($retweet == 1){
+			$checked = 'checked="checked"';
+		}else{
+			$checked = '';
+		}
+		echo '<p><label><input type="checkbox" name="retweet" '.$checked.' />  '.__('Retweet announcement?', 'widget-announcements').'</label></p>
+		<p>
+			'.__('Retweet Time: ', 'widget-announcements').'
+			
+			<input type="time" id="retweet-time" name="retweet-time" value="'.esc_html($retweet_time).'" required />
+		</p>';
+		
+		echo '<p>
+			<label for="hashtags">Hashtags</label><br/>
+			<input name="hashtags" type="text" style="width: 100%;" value="'.esc_html($hashtags).'" />
+		</p>
+	</p>';
+	
+}
+
+/**
+ * Save To Twitter Sidebar Metabox.
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_save_to_twitter_sidebar_metabox($post_id){
+	
+	if (! isset($_POST['azrcrv-wa-to-twitter-sidebar-nonce']) || ! wp_verify_nonce($_POST['azrcrv-wa-to-twitter-sidebar-nonce'], basename(__FILE__))){
+		return $post_id;
+	}
+	
+	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE){
+		return $post_id;
+	}
+	
+	if (! current_user_can('edit_post', $post_id)){
+		return $post_id;
+	}
+	
+	$post_type = get_post_type($post_id);
+	
+    if ($post_type == 'widget-announcement'){
+		if (isset($_POST['use-featured-image'])){
+			$use_featured_image = 1;
+		}else{
+			$use_featured_image = 0;
+		}
+		if (isset($_POST['tweet'])){
+			$tweet = 1;
+		}else{
+			$tweet = 0;
+		}
+		$tweet_time = preg_replace("([^0-9-:-])", "", $_POST['tweet-time']);
+		
+		if (isset($_POST['retweet'])){
+			$retweet = 1;
+		}else{
+			$retweet = 0;
+		}
+		$retweet_time = preg_replace("([^0-9-:-])", "", $_POST['retweet-time']);
+		
+		$hashtags = sanitize_text_field($_POST['hashtags']);
+		
+		$autopost_tweet = get_post_meta($post_id, '_azrcrv_wa_tweet', true);
+		
+		if (!is_array($autopost_tweet)){
+			$autopost_tweet = array(
+										'tweeted-date' => '1900-01-01',
+										'retweeted-date' => '1900-01-01',
+									);
+		}
+		
+		$autopost_tweet['use-featured-image'] = $use_featured_image;
+		$autopost_tweet['tweet'] = $tweet;
+		$autopost_tweet['tweet-time'] = $tweet_time;
+		$autopost_tweet['retweet'] = $retweet;
+		$autopost_tweet['retweet-time'] = $retweet_time;
+		$autopost_tweet['hashtags'] = $hashtags;
+		
+		update_post_meta($post_id, '_azrcrv_wa_tweet', $autopost_tweet);
+	}
+	
+	return;
+}
+
+/**
+ * Create Cron hourly check for widget announcements.
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_create_cron_hourly(){
+	
+	$options = azrcrv_wa_get_option('azrcrv-wa');
+	$to_twitter_enabled = azrcrv_wa_is_plugin_active('azrcrv-to-twitter/azrcrv-to-twitter.php');
+	
+	if ($to_twitter_enabled AND $options['to-twitter']['integrate'] == 1){
+		wp_schedule_event(strtotime('00:01:00'), 'hourly', 'azrcrv_wa_cron_hourly_check');
+	}
+	
+}
+
+/**
+ * Clear Cron hourly check for widget announcements.
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_clear_cron_hourly(){
+	
+	wp_clear_scheduled_hook("azrcrv_wa_cron_hourly_check");
+	
+}
+
+/**
+ * Clear Cron for widget announcement.
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_clear_cron_single($cron_name, $post_id, $type){
+	
+	wp_clear_scheduled_hook($cron_name, array($post_id, $type));
+	
+}
+
+/**
+ * Perform Cron hourly check for widget announcements.
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_perform_cron_check(){
+	
+	$today = getdate();
+	$announcements = get_posts(array(
+										'post_type' => 'widget-announcement',
+										'numberposts' => -1,
+										'orderby' => 'date',
+										'order' => 'ASC',
+										'post_status'   => 'publish',
+									),
+						);
+	
+	foreach ($announcements as $announcement){
+		
+		azrcrv_wa_check_tweet_today($announcement->ID, $announcement->post_date);
+		
+	}
+	
+}
+
+function azrcrv_wa_check_tweet_today($post_id, $post_date){
+	
+	$year = date('Y');
+	
+	$repeat_details = get_post_meta($post_id, '_azrcrv_wa_repeat', true);
+	
+	if (is_array($repeat_details)){
+		if (
+			// today
+			(date_format(date_create($post_date), "Y-m-d") == date("Y-m-d") AND $repeat_details['type'] == 'none')
+		OR
+			// annual repeat
+			(date_format(date_create($post_date), "m-d") == date('m-d') AND $repeat_details['type'] == 'annual')
+		OR
+			// month repeat
+			(date_format(date_create($post_date), "d") == date('d') AND $repeat_details['type'] == 'monthly')
+		OR
+			// n day of month repeat
+			(date( "Y-m-d") == date("Y-m-d", strtotime($repeat_details['month-repeat']['instance'].' '.$repeat_details['month-repeat']['day'].' of '.date('Y-m'))) AND $repeat_details['type'] == 'monthnday')
+		OR
+			// n day of month annaul repeat
+			(date( "Y-m-d") == date("Y-m-d", strtotime($repeat_details['annual-repeat']['instance']." ".$repeat_details['annual-repeat']['day']." of $year-".$repeat_details['annual-repeat']['month'])) AND $repeat_details['type'] == 'annualnday')
+		OR
+			// good friday
+			(date("Y-m-d", strtotime("+".(easter_days($year) - 2)." days", strtotime("$year-03-21 12:00:00"))) == date( "Y-m-d") AND $repeat_details['type'] == 'goodfriday')
+		OR
+			// easter sunday
+			(date("Y-m-d", easter_date($year)) == date( "Y-m-d") AND $repeat_details['type'] == 'eastersunday')
+		OR
+			// easter monday
+			(date("Y-m-d", strtotime("+".(easter_days($year) + 1)." days", strtotime("$year-03-21 12:00:00"))) == date( "Y-m-d") AND $repeat_details['type'] == 'eastermonday')
+		){
+			$autopost_tweet = get_post_meta($post_id, '_azrcrv_wa_tweet', true);
+			
+			if ($autopost_tweet['tweet'] == 1 AND $autopost_tweet['tweeted-date'] < date("Y-m-d")){
+				$cron_name = 'azrcrv_wa_cron_tweet_announcement';
+				$cron_type = 'tweet';
+				azrcrv_wa_clear_cron_single($cron_name, $post_id, $cron_type);
+				wp_schedule_single_event(strtotime($autopost_tweet['tweet-time']), $cron_name, array($post_id, $cron_type));
+			}
+			
+			if ($autopost_tweet['retweet'] == 1 AND $autopost_tweet['retweeted-date'] < date("Y-m-d")){
+				$cron_name = 'azrcrv_wa_cron_tweet_announcement';
+				$cron_type = 'retweet';
+				azrcrv_wa_clear_cron_single($cron_name, $post_id, $cron_type);
+				wp_schedule_single_event(strtotime($autopost_tweet['retweet-time']), $cron_name, array($post_id, $cron_type));
+			}
+		}
+	}
+}
+
+function azrcrv_wa_perform_tweet_announcement($post_id, $type){
+	
+	$post = get_post($post_id);
+	if ($post->post_status != 'publish'){ return; }
+	
+	$autopost_tweet = get_post_meta($post_id, '_azrcrv_wa_tweet', true);
+	if ($type == 'tweet'){
+		$autopost_tweet['tweeted-date'] = date('Y-m-d');
+	}
+	if ($type == 'retweet'){
+		$autopost_tweet['retweeted-date'] = date('Y-m-d');
+	}
+	update_post_meta($post_id, '_azrcrv_wa_tweet', $autopost_tweet);
+
+	$post_tweet = get_post_meta($post_id, '_azrcrv_wa_post_tweet', true);
+	$media_to_use = array();
+	if ($autopost_tweet['use-featured-image'] == 1 AND has_post_thumbnail($post_id)){
+		$post_image = get_the_post_thumbnail_url($post_id, 'full'); ;
+		$media_to_use[] = $post_image;
+	}
+	$post_media = get_post_meta( $post_id, '_azrcrv_wa_post_tweet_media', true ); // get tweet content
+	
+	$options = azrcrv_wa_get_option('azrcrv-wa');
+	
+	if ($type == 'retweet'){
+		$prefix = $options['to-twitter']['retweet-prefix'];
+		if (strlen($prefix) > 0){
+			$prefix .= ' ';
+		}
+	}else{
+		$prefix = '';
+	}
+	
+	if (function_exists('azrcrv_urls_get_custom_shortlink')){
+		$url = azrcrv_urls_get_custom_shortlink($post_id);
+	}else{
+		$url = get_permalink($post_id);
+	}
+	
+	$post_tweet = str_replace('%u', $url, $post_tweet);
+	
+	$post_tweet = $prefix.$post_tweet; //text for your tweet.
+	
+	$parameters = array("status" => $post_tweet);
+	if (isset($post_media) AND is_array($post_media)){
+		$media_pos = 0;
+		foreach ($post_media as $media){
+			$media_pos++;
+			if ($media_pos == 4 AND isset($post_image)){
+				break;
+			}else{
+				$media_to_use[] = $media;
+			}
+		}
+		$parameters['media-urls'] = $media_to_use;
+	}else{
+		if (isset($post_image)){
+			$parameters['media-urls'] = $media_to_use;
+		}
+	}
+	
+	$tweet_result = azrcrv_tt_post_tweet($parameters);
+	
+	$tt_options = azrcrv_tt_get_option('azrcrv-tt');
+	
+	if ($tt_options['record_tweet_history'] == 1){
+
+		$tweet_history = get_post_meta($post_id, '_azrcrv_tt_tweet_history', true);
+		if (!is_array($tweet_history)){ $tweet_history = array(); }
+		$tweet_history[] = array(
+									'key' => time(),
+									'date' => date("Y-m-d"),
+									'time' => date("H:i"),
+									'tweet_id' => $tweet_result['id'],
+									'author' => $tweet_result['screen_name'],
+									'tweet' => $post_tweet,
+									'status' => $tweet_result['status'],
+								);
+		update_post_meta($post_id, '_azrcrv_tt_tweet_history', $tweet_history);
+	}
+	
 }
