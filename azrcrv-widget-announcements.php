@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------------------
  * Plugin Name: Widget Announcements
  * Description: Announce holidays, events, achievements and notable historical figures in a widget.
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: azurecurve
  * Author URI: https://development.azurecurve.co.uk/classicpress-plugins/
  * Plugin URI: https://development.azurecurve.co.uk/classicpress-plugins/azrcrv-widget-announcements/
@@ -169,10 +169,10 @@ function azrcrv_wa_get_option($option_name){
 											'height' => 300,
 										),
 						'to-twitter' => array(
-												'integrate' => 1,
+												'integrate' => 0,
 												'tweet' => 0,
 												'retweet' => 0,
-												'retweet-prefix' => 'ICYMI',
+												'retweet-prefix' => 'ICYMI:',
 												'tweet-format' => '%t %h',
 												'tweet-time' => '10:00',
 												'retweet-time' => '16:00',
