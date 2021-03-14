@@ -1,12 +1,12 @@
-=== Widget Announcementa ===
+=== Widget Announcements ===
 
 Description:	Announce holidays, events, achievements and notable historical figures in a widget.
-Version:		1.2.0
+Version:		1.2.1
 Tags:			widget
 Author:			azurecurve
 Author URI:		https://development.azurecurve.co.uk/
 Plugin URI:		https://development.azurecurve.co.uk/classicpress-plugins/widget-announcements/
-Download link:	https://github.com/azurecurve/azrcrv-widget-announcements/releases/download/v1.2.0/azrcrv-widget-announcements.zip
+Download link:	https://github.com/azurecurve/azrcrv-widget-announcements/releases/download/v1.2.1/azrcrv-widget-announcements.zip
 Donate link:	https://development.azurecurve.co.uk/support-development/
 Requires PHP:	5.6
 Requires:		1.0.0
@@ -69,6 +69,9 @@ This plugin is developed for ClassicPress, but will likely work on WordPress.
 
 # Changelog
 
+### [Version 1.2.1](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.2.1)
+ * Fix bug with To Twitter checked.
+ 
 ### [Version 1.2.0](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.2.0)
  * Add integration with [To Twitter](https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/) from [azurecurve](https://development.azurecurve.co.uk/classicpress-plugins/) for automatic tweeting and retweeting of announcements.
  * Fix bug with population of default options.
