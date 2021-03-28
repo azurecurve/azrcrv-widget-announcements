@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------------------
  * Plugin Name: Widget Announcements
  * Description: Announce holidays, events, achievements and notable historical figures in a widget.
- * Version: 1.2.2
+ * Version: 1.3.0
  * Author: azurecurve
  * Author URI: https://development.azurecurve.co.uk/classicpress-plugins/
  * Plugin URI: https://development.azurecurve.co.uk/classicpress-plugins/azrcrv-widget-announcements/
@@ -60,7 +60,7 @@ add_action('admin_post_azrcrv_wa_save_options', 'azrcrv_wa_save_options');
 add_action('azrcrv_wa_cron_hourly_check', 'azrcrv_wa_perform_cron_check');
 add_action('azrcrv_wa_cron_tweet_announcement', 'azrcrv_wa_perform_tweet_announcement', 10, 2);
 add_action('transition_post_status', 'azrcrv_wa_post_status_transition', 13, 3);
-add_action('admin_enqueue_scripts', 'azrcrv_wa_load_jquery');
+add_action('admin_enqueue_scripts', 'azrcrv_wa_load_admin_jquery');
 add_action('admin_enqueue_scripts', 'azrcrv_wa_media_uploader');
 add_action('admin_enqueue_scripts', 'azrcrv_wa_load_admin_style');
 
@@ -122,8 +122,8 @@ function azrcrv_wa_load_css(){
  * @since 1.0.0
  *
  */
-function azrcrv_wa_load_jquery(){
-	wp_enqueue_script('azrcrv-wa-jquery', plugins_url('assets/jquery/jquery.js', __FILE__), array('jquery'));
+function azrcrv_wa_load_admin_jquery(){
+	wp_enqueue_script('azrcrv-wa-jquery', plugins_url('assets/jquery/admin.js', __FILE__), array('jquery'));
 }
 
 /**
@@ -177,6 +177,9 @@ function azrcrv_wa_get_option($option_name){
 												'tweet-time' => '10:00',
 												'retweet-time' => '16:00',
 												'use-featured-image' => 1,
+											),
+						'toggle-showhide' => array(
+												'integrate' => 0,
 											),
 					);
 
@@ -239,19 +242,19 @@ function azrcrv_wa_create_custom_post_type(){
 	register_post_type('widget-announcement',
 		array(
 				'labels' => array(
-									'name' => esc_html__('Announcements', 'widget-announcements'),
-									'singular_name' => esc_html__('Announcement', 'widget-announcements'),
-									'add_new' => esc_html__('Add New', 'widget-announcements'),
-									'add_new_item' => esc_html__('Add New Announcement', 'widget-announcements'),
-									'edit' => esc_html__('Edit', 'widget-announcements'),
-									'edit_item' => esc_html__('Edit Announcement', 'widget-announcements'),
-									'new_item' => esc_html__('New Announcement', 'widget-announcements'),
-									'view' => esc_html__('View', 'widget-announcements'),
-									'view_item' => esc_html__('View Announcement', 'widget-announcements'),
-									'search_items' => esc_html__('Search Announcement', 'widget-announcements'),
-									'not_found' => esc_html__('No Announcement found', 'widget-announcements'),
-									'not_found_in_trash' => esc_html__('No Announcement found in Trash', 'widget-announcements'),
-									'parent' => esc_html__('Parent Announcement', 'widget-announcements')
+									'name' => __('Announcements', 'widget-announcements'),
+									'singular_name' => __('Announcement', 'widget-announcements'),
+									'add_new' => __('Add New', 'widget-announcements'),
+									'add_new_item' => __('Add New Announcement', 'widget-announcements'),
+									'edit' => __('Edit', 'widget-announcements'),
+									'edit_item' => __('Edit Announcement', 'widget-announcements'),
+									'new_item' => __('New Announcement', 'widget-announcements'),
+									'view' => __('View', 'widget-announcements'),
+									'view_item' => __('View Announcement', 'widget-announcements'),
+									'search_items' => __('Search Announcement', 'widget-announcements'),
+									'not_found' => __('No Announcement found', 'widget-announcements'),
+									'not_found_in_trash' => __('No Announcement found in Trash', 'widget-announcements'),
+									'parent' => __('Parent Announcement', 'widget-announcements')
 								),
 			'public' => false,
 			'exclude_from_search' => true,
@@ -434,7 +437,7 @@ function azrcrv_wa_save_tweet_metabox( $post_id, $post ) {
 	}
 
 	// Verify user has permission to edit post
-	if ( !current_user_can( 'edit_post', $post->ID )) {
+	if (!current_user_can( 'edit_post', $post->ID)){
 		return $post->ID;
 	}
 	
@@ -466,7 +469,7 @@ function azrcrv_wa_save_tweet_metabox( $post_id, $post ) {
 		/**
 		 * Sanitize the submitted data
 		 */
-		$post_tweet = sanitize_text_field( $_POST['post_tweet'] );
+		$post_tweet = sanitize_text_field($_POST['post_tweet']);
 	}
 	
 	$media = array();
@@ -575,7 +578,7 @@ function azrcrv_wa_render_tweet_history_metabox() {
  *
  */
 function azrcrv_wa_add_sidebar_metabox(){
-	add_meta_box('azrcrv-wa-box', esc_html__('Repeat announcement', 'widget-announcement'), 'azrcrv_wa_generate_sidebar_metabox', array('widget-announcement'), 'side', 'default');	
+	add_meta_box('azrcrv-wa-box', __('Repeat announcement', 'widget-announcement'), 'azrcrv_wa_generate_sidebar_metabox', array('widget-announcement'), 'side', 'default');	
 }
 
 /**
@@ -791,7 +794,7 @@ function azrcrv_wa_add_plugin_action_link($links, $file){
 	}
 
 	if ($file == $this_plugin){
-		$settings_link = '<a href="'.admin_url('admin.php?page=azrcrv-wa').'"><img src="'.plugins_url('/pluginmenu/images/Favicon-16x16.png', __FILE__).'" style="padding-top: 2px; margin-right: -5px; height: 16px; width: 16px;" alt="azurecurve" />'.esc_html__('Settings' ,'widget-announcements').'</a>';
+		$settings_link = '<a href="'.admin_url('admin.php?page=azrcrv-wa').'"><img src="'.plugins_url('/pluginmenu/images/Favicon-16x16.png', __FILE__).'" style="padding-top: 2px; margin-right: -5px; height: 16px; width: 16px;" alt="azurecurve" />'.__('Settings' ,'widget-announcements').'</a>';
 		array_unshift($links, $settings_link);
 	}
 
@@ -809,8 +812,8 @@ function azrcrv_wa_create_admin_menu(){
 	// add settings to announcements submenu
 	add_submenu_page(
 						'edit.php?post_type=widget-announcement'
-						,esc_html__('Widget Announcement Settings', 'widget-announcements')
-						,esc_html__('Settings', 'widget-announcements')
+						,__('Widget Announcement Settings', 'widget-announcements')
+						,__('Settings', 'widget-announcements')
 						,'manage_options'
 						,'azrcrv-wa'
 						,'azrcrv_wa_display_options'
@@ -819,8 +822,8 @@ function azrcrv_wa_create_admin_menu(){
 	// add settings to azurecurve menu
 	add_submenu_page(
 						"azrcrv-plugin-menu"
-						,esc_html__("Widget Announcements Settings", "widget-announcements")
-						,esc_html__("Widget Announcements", "widget-announcements")
+						,__("Widget Announcements Settings", "widget-announcements")
+						,__("Widget Announcements", "widget-announcements")
 						,'manage_options'
 						,'azrcrv-wa'
 						,'azrcrv_wa_display_options'
@@ -835,13 +838,14 @@ function azrcrv_wa_create_admin_menu(){
  */
 function azrcrv_wa_display_options(){
 	if (!current_user_can('manage_options')){
-        wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'widget-announcements'));
+        wp_die(__('You do not have sufficient permissions to access this page.', 'widget-announcements'));
     }
 	
 	// Retrieve plugin configuration options from database
 	$options = azrcrv_wa_get_option('azrcrv-wa');
 	
 	$to_twitter_enabled = azrcrv_wa_is_plugin_active('azrcrv-to-twitter/azrcrv-to-twitter.php');
+	$toggle_showhide_enabled = azrcrv_wa_is_plugin_active('azrcrv-toggle-showhide/azrcrv-toggle-showhide.php');
 	
 	?>
 	<div id="azrcrv-wa-general" class="wrap azrcrv-wa">
@@ -849,7 +853,7 @@ function azrcrv_wa_display_options(){
 			<h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 			<?php if(isset($_GET['settings-updated'])){ ?>
 				<div class="notice notice-success is-dismissible">
-					<p><strong><?php esc_html_e('Settings have been saved.', 'widget-announcements'); ?></strong></p>
+					<p><strong><?php _e('Settings have been saved.', 'widget-announcements'); ?></strong></p>
 				</div>
 			<?php } ?>
 			<form method="post" action="admin-post.php">
@@ -864,7 +868,8 @@ function azrcrv_wa_display_options(){
 				</p>
 				
 				<p>
-					Announcements can be made:
+					<?php
+						_e('Announcements can be made:
 					<li>One off</li>
 					<li>Monthly</li>
 					<li>Annually</li>
@@ -872,16 +877,24 @@ function azrcrv_wa_display_options(){
 					<li>Easter Sunday</li>
 					<li>Easter Monday</li>
 					<li>Monthly on the nth day (e.g. 2nd Wednesday)</li>
-					<li>Annually on the nth day of the month (e.g. 4th Thursday November)</li>
+					<li>Annually on the nth day of the month (e.g. 4th Thursday November)</li>', 'widget-announcements');
+					?>
 				</p>
 				<p> 
-					Announcements are created as a custom post type and can have details, an image and additional text after the image; images should be narrower than your widget area.
+					<?php
+						_e('Announcements are created as a custom post type and can have details, an image and additional text after the image; images should be narrower than your widget area.', 'widget-announcements');
+					?>
 				</p>
 				<p>
-					When creating widgets they can be added to one or more categories; when adding a widget, select the category to include.
+					<?php
+						_e('When creating widgets they can be added to one or more categories; when adding a widget, select the category to include.', 'widget-announcements');
+					?>
 				</p>
 				<p>
 					<?php printf(__('Integration with the %s plugin from %s can be enabled to send announcements to Twitter.'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/">To Twitter</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?>
+				</p>
+				<p>
+					<?php printf(__('Integration with the %s plugin from %s can be enabled to use the &lt;!--readmore--&gt; tag in the <em>content</em> and <em>text after announcement</em> fields.'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/">Toggle Show/Hide</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?>
 				</p>
 				
 				<?php
@@ -889,22 +902,23 @@ function azrcrv_wa_display_options(){
 				
 					if(isset($_GET['i'])){
 							$tab1active = '';
-							$tab2active = 'nav-tab-active';
-							$tab1visibility = 'invisible';
+							$tab2active = 'azrcrv-wa-nav-tab-active';
+							$tab1visibility = 'azrcrv-wa-tab-invisible';
 							$tab2visibility = '';
 						}else{
-							$tab1active = 'nav-tab-active';
+							$tab1active = 'azrcrv-wa-nav-tab-active';
 							$tab2active = '';
 							$tab1visibility = '';
-							$tab2visibility = 'invisible';
+							$tab2visibility = 'azrcrv-wa-tab-invisible';
 						}
 					?>
-					<h2 class="nav-tab-wrapper nav-tab-wrapper-azrcrv-wa">
-						<a class="nav-tab <?php echo $tab1active; ?>" data-item=".tabs-1" href="#tabs-1"><?php _e('Settings', 'widget-announcements') ?></a>
-						<a class="nav-tab <?php echo $tab2active; ?>" data-item=".tabs-2" href="#tabs-2"><?php _e('To Twitter Integration', 'widget-announcements') ?></a>
+					<h2 class="azrcrv-wa-nav-wrapper">
+						<a class="azrcrv-wa-nav-tab <?php echo $tab1active; ?>" data-item=".tabs-1" href="#tabs-1"><?php _e('Settings', 'widget-announcements') ?></a>
+						<a class="azrcrv-wa-nav-tab <?php echo $tab2active; ?>" data-item=".tabs-2" href="#tabs-2"><?php _e('To Twitter Integration', 'widget-announcements') ?></a>
 					</h2>
-					<div>
-						<div class="azrcrv_wa_tabs tabs-1 <?php echo $tab1visibility; ?>">
+					
+					<div class='azrcrv-wa-tab-wrapper'>
+						<div class="azrcrv-wa-tab tabs-1 <?php echo $tab1visibility; ?>">
 				<?php } ?>
 				
 							<table class="form-table">
@@ -917,7 +931,7 @@ function azrcrv_wa_display_options(){
 								
 								<tr>
 									<th scope="row"><label for="widget-width">
-										<?php esc_html_e('Width', 'widget-announcements'); ?></label>
+										<?php _e('Width', 'widget-announcements'); ?></label>
 									</th>
 									<td>
 										<input name="widget-width" type="number" min="1" id="widget-width" value="<?php if (strlen($options['widget']['width']) > 0){ echo sanitize_text_field($options['widget']['width']); } ?>" class="small-text" /> px
@@ -926,7 +940,7 @@ function azrcrv_wa_display_options(){
 								
 								<tr>
 									<th scope="row"><label for="widget-height">
-										<?php esc_html_e('Height', 'widget-announcements'); ?></label>
+										<?php _e('Height', 'widget-announcements'); ?></label>
 									</th>
 									<td>
 										<input name="widget-height" type="number" min="1" id="widget-height" value="<?php if (strlen($options['widget']['height']) > 0){ echo sanitize_text_field($options['widget']['height']); } ?>" class="small-text" /> px
@@ -934,23 +948,40 @@ function azrcrv_wa_display_options(){
 								</tr>
 								
 								<tr>
-									<th>
-										<h3><?php _e('To-Twitter Integration', 'widget-announcements'); ?></h3>
+									<th colspan=2>
+										<h3><?php _e('Integration', 'widget-announcements'); ?></h3>
 									</th>
 								</tr>
 								
 								<tr>
 									<th scope="row">
 										<label for="to-twitter-integration">
-											<?php esc_html_e('Enable integration', 'widget-announcements'); ?>
+											<?php _e('Enable To Twitter', 'widget-announcements'); ?>
 										</label>
 									</th>
 									<td>
 										<?php
 											if ($to_twitter_enabled){ ?>
-												<label for="to-twitter-integration"><input name="to-twitter-integration" type="checkbox" id="to-twitter-integration" value="1" <?php checked('1', $options['to-twitter']['integrate']); ?> /><?php printf(esc_html__('Enable integration with %s from %s?', 'widget-announcements'), '<a href="admin.php?page=azrcrv-tt">To Twitter</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?></label>
+												<label for="to-twitter-integration"><input name="to-twitter-integration" type="checkbox" id="to-twitter-integration" value="1" <?php checked('1', $options['to-twitter']['integrate']); ?> /><?php printf(__('Enable integration with %s from %s?', 'widget-announcements'), '<a href="admin.php?page=azrcrv-tt">To Twitter</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?></label>
 											<?php }else{
-												printf(esc_html__('%s from %s not installed/activated.', 'widget-announcements'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/">To Twitter</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>');
+												printf(__('%s from %s not installed/activated.', 'widget-announcements'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/">To Twitter</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>');
+											}
+										?>
+									</td>
+								</tr>
+								
+								<tr>
+									<th scope="row">
+										<label for="toggle-showhide-integration">
+											<?php _e('Enable Toggle Show/Hide', 'widget-announcements'); ?>
+										</label>
+									</th>
+									<td>
+										<?php
+											if ($toggle_showhide_enabled){ ?>
+												<label for="toggle-showhide-integration"><input name="toggle-showhide-integration" type="checkbox" id="toggle-showhide-integration" value="1" <?php checked('1', $options['toggle-showhide']['integrate']); ?> /><?php printf(__('Enable integration with %s from %s?', 'widget-announcements'), '<a href="admin.php?page=azrcrv-tt">Toggle Show/Hide</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?></label>
+											<?php }else{
+												printf(__('%s from %s not installed/activated.', 'widget-announcements'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/">Toggle Show/Hide</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>');
 											}
 										?>
 									</td>
@@ -961,57 +992,57 @@ function azrcrv_wa_display_options(){
 				<?php if ($to_twitter_enabled AND $options['to-twitter']['integrate'] == 1){ ?>
 						</div>
 				
-					<div class="azrcrv_wa_tabs <?php echo $tab2visibility; ?> tabs-2">
+						<div class="azrcrv-wa-tab <?php echo $tab2visibility; ?> tabs-2">
 				
 							<table class="form-table">
 						
 								<tr>
 									<th scope="row">
 										<label for="to-twitter-tweet">
-											<?php esc_html_e('Tweet', 'widget-announcements'); ?>
+											<?php _e('Tweet', 'widget-announcements'); ?>
 										</label>
 									</th>
 									<td>
-										<label for="to-twitter-tweet"><input name="to-twitter-tweet" type="checkbox" id="to-twitter-tweet" value="1" <?php checked('1', $options['to-twitter']['tweet']); ?> /><?php esc_html_e('Send tweet at below time?', 'widget-announcements'); ?></label>
+										<label for="to-twitter-tweet"><input name="to-twitter-tweet" type="checkbox" id="to-twitter-tweet" value="1" <?php checked('1', $options['to-twitter']['tweet']); ?> /><?php _e('Send tweet at below time?', 'widget-announcements'); ?></label>
 									</td>
 								</tr>
 								
 								<tr>
 									<th scope="row">
 										<label for="to-twitter-tweet-time">
-											<?php esc_html_e('Tweet Time', 'widget-announcements'); ?>
+											<?php _e('Tweet Time', 'widget-announcements'); ?>
 										</label>
 									</th>
 									<td>										
-										<input type="time" id="to-twitter-tweet-time" name="to-twitter-tweet-time" value="<?php esc_html_e($options['to-twitter']['tweet-time']); ?>" required />
+										<input type="time" id="to-twitter-tweet-time" name="to-twitter-tweet-time" value="<?php _e($options['to-twitter']['tweet-time']); ?>" required />
 									</td>
 								</tr>
 								
 								<tr>
 									<th scope="row">
 										<label for="to-twitter-retweet">
-											<?php esc_html_e('Reweet', 'widget-announcements'); ?>
+											<?php _e('Reweet', 'widget-announcements'); ?>
 										</label>
 									</th>
 									<td>
-										<label for="to-twitter-retweet"><input name="to-twitter-retweet" type="checkbox" id="to-twitter-retweet" value="1" <?php checked('1', $options['to-twitter']['retweet']); ?> /><?php esc_html_e('Send retweet at below time?', 'widget-announcements'); ?></label>
+										<label for="to-twitter-retweet"><input name="to-twitter-retweet" type="checkbox" id="to-twitter-retweet" value="1" <?php checked('1', $options['to-twitter']['retweet']); ?> /><?php _e('Send retweet at below time?', 'widget-announcements'); ?></label>
 									</td>
 								</tr>
 								
 								<tr>
 									<th scope="row">
 										<label for="to-twitter-retweet-time">
-											<?php esc_html_e('Tweet Time', 'widget-announcements'); ?>
+											<?php _e('Tweet Time', 'widget-announcements'); ?>
 										</label>
 									</th>
 									<td>										
-										<input type="time" id="to-twitter-retweet-time" name="to-twitter-retweet-time" value="<?php esc_html_e($options['to-twitter']['retweet-time']); ?>" required />
+										<input type="time" id="to-twitter-retweet-time" name="to-twitter-retweet-time" value="<?php _e($options['to-twitter']['retweet-time']); ?>" required />
 									</td>
 								</tr>
 								
 								<tr>
 									<th scope="row"><label for="to-twitter-retweet-prefix">
-										<?php esc_html_e('Retweet Prefix', 'widget-announcements'); ?></label>
+										<?php _e('Retweet Prefix', 'widget-announcements'); ?></label>
 									</th>
 									<td>
 										<input name="to-twitter-retweet-prefix" type="text" id="to-twitter-retweet-prefix" value="<?php if (strlen($options['to-twitter']['retweet-prefix']) > 0){ echo sanitize_text_field($options['to-twitter']['retweet-prefix']); } ?>" class="regular-text" />
@@ -1020,7 +1051,7 @@ function azrcrv_wa_display_options(){
 								
 								<tr>
 									<th scope="row"><label for="to-twitter-tweet-format">
-										<?php esc_html_e('Tweet Format', 'widget-announcements'); ?></label>
+										<?php _e('Tweet Format', 'widget-announcements'); ?></label>
 									</th>
 									<td>
 										<input name="to-twitter-tweet-format" type="text" id="to-twitter-tweet-format" value="<?php if (strlen($options['to-twitter']['tweet-format']) > 0){ echo sanitize_text_field($options['to-twitter']['tweet-format']); } ?>" class="regular-text" />
@@ -1030,16 +1061,16 @@ function azrcrv_wa_display_options(){
 								<tr>
 									<th scope="row">
 										<label for="to-twitter-use-featured-image">
-											<?php esc_html_e('Use Featured Imge', 'widget-announcements'); ?>
+											<?php _e('Use Featured Imge', 'widget-announcements'); ?>
 										</label>
 									</th>
 									<td>
-										<label for="to-twitter-use-featured-image"><input name="to-twitter-use-featured-image" type="checkbox" id="to-twitter-use-featured-image" value="1" <?php checked('1', $options['to-twitter']['use-featured-image']); ?> /><?php esc_html__('Use featured image? Only three other media images can be included in the tweet.', 'widget-announcements'); ?></label>
+										<label for="to-twitter-use-featured-image"><input name="to-twitter-use-featured-image" type="checkbox" id="to-twitter-use-featured-image" value="1" <?php checked('1', $options['to-twitter']['use-featured-image']); ?> /><?php _e('Use featured image? Only three other media images can be included in the tweet.', 'widget-announcements'); ?></label>
 									</td>
 								</tr>
 								
 							</table>
-					</div>
+						</div>
 				</div>
 				<?php } ?>
 				
@@ -1055,7 +1086,7 @@ function azrcrv_wa_display_options(){
 		</p>
 		<p>
 			<label for="additional-plugins">
-				<?php printf(esc_html__('This plugin integrates with the following plugins from %s:', 'widget-announcements'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?>
+				<?php printf(__('This plugin integrates with the following plugins from %s:', 'widget-announcements'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?>
 			</label>
 			<ul class='azrcrv-plugin-index'>
 				<li>
@@ -1064,6 +1095,15 @@ function azrcrv_wa_display_options(){
 						echo '<a href="admin.php?page=azrcrv-tt" class="azrcrv-plugin-index">To Twitter</a>';
 					}else{
 						echo '<a href="https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/" class="azrcrv-plugin-index">To Twitter</a>';
+					}
+					?>
+				</li>
+				<li>
+					<?php
+					if ($to_twitter_enabled){
+						echo '<a href="admin.php?page=azrcrv-tsh" class="azrcrv-plugin-index">Toggle Show/Hide</a>';
+					}else{
+						echo '<a href="https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/" class="azrcrv-plugin-index">Toggle Show/Hide</a>';
 					}
 					?>
 				</li>
@@ -1092,7 +1132,7 @@ function azrcrv_wa_is_plugin_active($plugin){
 function azrcrv_wa_save_options(){
 	// Check that user has proper security level
 	if (!current_user_can('manage_options')){
-		wp_die(esc_html__('You do not have permissions to perform this action', 'widget-announcements'));
+		wp_die(__('You do not have permissions to perform this action', 'widget-announcements'));
 	}
 	// Check that nonce field created in configuration form is present
 	if (! empty($_POST) && check_admin_referer('azrcrv-wa', 'azrcrv-wa-nonce')){
@@ -1159,6 +1199,13 @@ function azrcrv_wa_save_options(){
 			$options['to-twitter']['use-featured-image'] = 1;
 		}else{
 			$options['to-twitter']['use-featured-image'] = 0;
+		}
+		
+		$option_name = 'toggle-showhide-integration';
+		if (isset($_POST[$option_name])){
+			$options['toggle-showhide']['integrate'] = 1;
+		}else{
+			$options['toggle-showhide']['integrate'] = 0;
 		}
 		
 		// Store updated options array to database
@@ -1245,7 +1292,7 @@ class azrcrv_wa_register_widget extends WP_Widget {
 		parent::__construct('azrcrv-wa',
 							 'Widget Announcements by azurecurve',
 							 array('description' =>
-									esc_html__('Announcements in a widget', 'widget-announcements')));
+									__('Announcements in a widget', 'widget-announcements')));
 	}
 	
 	/**
@@ -1416,12 +1463,25 @@ class azrcrv_wa_register_widget extends WP_Widget {
 				echo $after_title; 
 				
 				// display widget body
-				echo '<p>'.$announcement->post_content.'</p>';
+				if ($options['toggle-showhide']['integrate'] == 1 AND azrcrv_wa_is_plugin_active('azrcrv-toggle-showhide/azrcrv-toggle-showhide.php')){
+					$toggle_showhide_enabled = 1;
+				}else{
+					$toggle_showhide_enabled = 0;
+				}
+				
+				$content = $announcement->post_content;
+				$excerpt = $announcement->post_excerpt;
+				if ($toggle_showhide_enabled){
+					$atts = array('style' => 2, );
+					$content = azrcrv_tsh_display_toggle($atts, $content);
+					$excerpt = azrcrv_tsh_display_toggle($atts, $excerpt);
+				}
+				echo '<p>'.$content.'</p>';
 				if (has_post_thumbnail($announcement->ID)){
 					$image = wp_get_attachment_image(get_post_thumbnail_id($announcement->ID), array($width,$height),'', array('class' => "img-responsive aligncenter", 'alt' => get_the_title()));
 					echo '<div class="azrcrv-wa">'.$image.'</div>';
 				}
-				echo '<p>'.$announcement->post_excerpt.'</p>';
+				echo '<p>'.$excerpt.'</p>';
 				
 				// display widget footer
 				echo $after_widget;
@@ -1437,15 +1497,21 @@ class azrcrv_wa_register_widget extends WP_Widget {
  *
  */
 function azrcrv_wa_add_to_twitter_sidebar_metabox(){
+		
+	$options = azrcrv_wa_get_option('azrcrv-wa');
 	
-	$to_twitter_enabled = azrcrv_wa_is_plugin_active('azrcrv-to-twitter/azrcrv-to-twitter.php');
+	if ($options['to-twitter']['integrate'] == 1 AND azrcrv_wa_is_plugin_active('azrcrv-to-twitter/azrcrv-to-twitter.php')){
+		$to_twitter_enabled = 1;
+	}else{
+		$to_twitter_enabled = 0;
+	}
 	
 	if ($to_twitter_enabled){
 		
 		$options = azrcrv_wa_get_option('azrcrv-wa');
 		
 		if ($options['to-twitter']['integrate'] == 1){
-			add_meta_box('azrcrv-wa-to-twitter-box', esc_html__('Autopost Tweet', 'widget-announcements'), 'azrcrv_wa_generate_to_twitter_sidebar_metabox', 'widget-announcement', 'side', 'default');
+			add_meta_box('azrcrv-wa-to-twitter-box', __('Autopost Tweet', 'widget-announcements'), 'azrcrv_wa_generate_to_twitter_sidebar_metabox', 'widget-announcement', 'side', 'default');
 		}
 		
 	}
@@ -1744,14 +1810,6 @@ function azrcrv_wa_perform_tweet_announcement($post_id, $type){
 	}else{
 		$prefix = '';
 	}
-	
-	if (function_exists('azrcrv_urls_get_custom_shortlink')){
-		$url = azrcrv_urls_get_custom_shortlink($post_id);
-	}else{
-		$url = get_permalink($post_id);
-	}
-	
-	$post_tweet = str_replace('%u', $url, $post_tweet);
 	
 	$post_tweet = $prefix.$post_tweet; //text for your tweet.
 	

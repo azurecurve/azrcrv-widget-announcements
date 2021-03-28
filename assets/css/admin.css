@@ -1,11 +1,34 @@
-.azrcrv_wa_tabs{
-	padding:15px !important;
+.azrcrv-wa-nav-wrapper{
+	padding-top: 6px;
+	margin-bottom: none;
 }
-.azrcrv_wa_tabs.invisible{
-	display:none;
+.azrcrv-wa-nav-tab{
+	padding: 6px 12px;
+	border: 1px solid grey;
+	border-bottom: 4px solid grey;
+	text-decoration: none;
+	color: grey;
 }
-.azrcrv_wa_horiz{
-	margin:0 0 0 10px;
+.azrcrv-wa-nav-tab-active{
+	border: 1px solid grey;
+	border-bottom: 4px solid #007FFF;
+	color: #007FFF;
+}
+.azrcrv-wa-nav-tab:hover{
+	border: 1px solid grey;
+	border-bottom: 4px solid #ff8000;
+	color: #ff8000;
+}
+.azrcrv-wa-tab-wrapper{
+	border: 1px solid grey;
+	margin-top: -5px;
+	margin-bottom: 6px;
+}
+.azrcrv-wa-tab{
+	padding: 0 15px;
+}
+.azrcrv-wa-tab-invisible{
+	display: none;
 }
 img.azrcrv-wa{
 	border: none;
