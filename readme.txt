@@ -1,7 +1,7 @@
 === Widget Announcements ===
 
 Description:	Announce holidays, events, achievements and notable historical figures in a widget.
-Version:		1.3.0
+Version:		1.3.x
 Tags:			widget
 Author:			azurecurve
 Author URI:		https://development.azurecurve.co.uk/
@@ -69,6 +69,9 @@ This plugin is developed for ClassicPress, but will likely work on WordPress.
 
 # Changelog
 
+### [Version 1.3.x](https://github.com/azurecurve/azrcrv-events/releases/tag/v1.3.x)
+ * Replace plugin logo and add to settings page.
+ 
 ### [Version 1.3.0](https://github.com/azurecurve/azrcrv-events/releases/tag/v1.3.0)
  * Add integration with [Toggle Show/Hide](https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/) from [azurecurve](https://development.azurecurve.co.uk/classicpress-plugins/) for read more toggle in announcements.
  * Add uninstall function.

@@ -21,7 +21,7 @@ if (!function_exists('azrcrv_add_plugin_menu')){
 				'manage_options',
 				'azrcrv-plugin-menu',
 				'azrcrv_display_plugin_menu',
-				plugins_url('/pluginmenu/images/Favicon-16x16.png', __DIR__)
+				plugins_url('/pluginmenu/images/logo.svg', __DIR__)
 			);
 			add_submenu_page(
 				'azrcrv-plugin-menu',
