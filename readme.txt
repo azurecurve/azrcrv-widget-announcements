@@ -70,7 +70,7 @@ This plugin is developed for ClassicPress, but will likely work on WordPress.
 # Changelog
 
 ### [Version 1.3.0](https://github.com/azurecurve/azrcrv-events/releases/tag/v1.3.0)
- * Add integration with [Toggle Show/Hide](https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/) from [azurecurve](https://development.azurecurve.co.uk/classicpress-plugins/) for read more toggle in annoucnements.
+ * Add integration with [Toggle Show/Hide](https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/) from [azurecurve](https://development.azurecurve.co.uk/classicpress-plugins/) for read more toggle in announcements.
  * Add uninstall function.
  * Refactor settings page.
  * Compress banners, icons and screenshots.
