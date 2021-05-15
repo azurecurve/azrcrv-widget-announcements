@@ -1,12 +1,12 @@
 === Widget Announcements ===
 
 Description:	Announce holidays, events, achievements and notable historical figures in a widget.
-Version:		1.3.x
+Version:		1.5.0
 Tags:			widget
 Author:			azurecurve
 Author URI:		https://development.azurecurve.co.uk/
 Plugin URI:		https://development.azurecurve.co.uk/classicpress-plugins/widget-announcements/
-Download link:	https://github.com/azurecurve/azrcrv-widget-announcements/releases/download/v1.3.0/azrcrv-widget-announcements.zip
+Download link:	https://github.com/azurecurve/azrcrv-widget-announcements/releases/download/v1.5.0/azrcrv-widget-announcements.zip
 Donate link:	https://development.azurecurve.co.uk/support-development/
 Requires PHP:	5.6
 Requires:		1.0.0
@@ -69,17 +69,21 @@ This plugin is developed for ClassicPress, but will likely work on WordPress.
 
 # Changelog
 
-### [Version 1.3.x](https://github.com/azurecurve/azrcrv-events/releases/tag/v1.3.x)
- * Replace plugin logo and add to settings page.
+### [Version 1.5.0](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.5.0)
+ * Update translations to escape strings.
+ * Update azurecurve menu and logo.
  
-### [Version 1.3.0](https://github.com/azurecurve/azrcrv-events/releases/tag/v1.3.0)
+### [Version 1.4.0](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.4.0)
+ * Refactor settings page to be accessible using jQuery UI Tabs.
+ 
+### [Version 1.3.0](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.3.0)
  * Add integration with [Toggle Show/Hide](https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/) from [azurecurve](https://development.azurecurve.co.uk/classicpress-plugins/) for read more toggle in announcements.
  * Add uninstall function.
  * Refactor settings page.
  * Compress banners, icons and screenshots.
  * Fix To Twitter integration check.
 
-### [Version 1.2.3](https://github.com/azurecurve/azrcrv-events/releases/tag/v1.2.3)
+### [Version 1.2.3](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.2.3)
  * Remove extraneous code.
 
 ### [Version 1.2.2](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.2.2)

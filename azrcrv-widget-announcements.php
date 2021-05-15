@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------------------
  * Plugin Name: Widget Announcements
  * Description: Announce holidays, events, achievements and notable historical figures in a widget.
- * Version: 1.3.x
+ * Version: 1.5.0
  * Author: azurecurve
  * Author URI: https://development.azurecurve.co.uk/classicpress-plugins/
  * Plugin URI: https://development.azurecurve.co.uk/classicpress-plugins/azrcrv-widget-announcements/
@@ -60,9 +60,9 @@ add_action('admin_post_azrcrv_wa_save_options', 'azrcrv_wa_save_options');
 add_action('azrcrv_wa_cron_hourly_check', 'azrcrv_wa_perform_cron_check');
 add_action('azrcrv_wa_cron_tweet_announcement', 'azrcrv_wa_perform_tweet_announcement', 10, 2);
 add_action('transition_post_status', 'azrcrv_wa_post_status_transition', 13, 3);
+add_action('admin_enqueue_scripts', 'azrcrv_wa_load_admin_style');
 add_action('admin_enqueue_scripts', 'azrcrv_wa_load_admin_jquery');
 add_action('admin_enqueue_scripts', 'azrcrv_wa_media_uploader');
-add_action('admin_enqueue_scripts', 'azrcrv_wa_load_admin_style');
 
 // add filters
 add_filter('plugin_action_links', 'azrcrv_wa_add_plugin_action_link', 10, 2);
@@ -117,13 +117,34 @@ function azrcrv_wa_load_css(){
 }
 
 /**
- * Load media uploaded.
+ * Load admin css.
+ *
+ * @since 1.2.0
+ *
+ */
+function azrcrv_wa_load_admin_style(){
+	
+	global $pagenow;
+	
+	if ($pagenow == 'admin.php' AND $_GET['page'] == 'azrcrv-wa'){
+		wp_register_style('azrcrv-wa-admin-css', plugins_url('assets/css/admin.css', __FILE__), false, '1.0.0');
+		wp_enqueue_style('azrcrv-wa-admin-css');
+	}
+}
+
+/**
+ * Load admin jQuery.
  *
  * @since 1.0.0
  *
  */
 function azrcrv_wa_load_admin_jquery(){
-	wp_enqueue_script('azrcrv-wa-jquery', plugins_url('assets/jquery/admin.js', __FILE__), array('jquery'));
+	
+	global $pagenow;
+	
+	if ($pagenow == 'admin.php' AND $_GET['page'] == 'azrcrv-wa'){
+		wp_enqueue_script('azrcrv-wa-admin-jquery', plugins_url('assets/jquery/admin.js', __FILE__), array('jquery'));
+	}
 }
 
 /**
@@ -142,17 +163,6 @@ function azrcrv_wa_media_uploader(){
 		wp_enqueue_script('thickbox');
 		wp_enqueue_style('thickbox');
 	}
-}
-
-/**
- * Load admin css.
- *
- * @since 1.2.0
- *
- */
-function azrcrv_wa_load_admin_style(){
-    wp_register_style('azrcrv-wa-admin-css', plugins_url('assets/css/admin.css', __FILE__), false, '1.0.0');
-    wp_enqueue_style( 'azrcrv-wa-admin-css' );
 }
 
 /**
@@ -224,7 +234,7 @@ function azrcrv_wa_create_cust_taxonomy_for_custom_post() {
 						'announcement-category',
 						'widget-announcement',
 						array(
-						'label' => __( 'Category' ),
+						'label' => esc_html__( 'Category' ),
 						'rewrite' => array( 'slug' => 'announcement-category' ),
 						'hierarchical' => true,
 					)
@@ -242,19 +252,19 @@ function azrcrv_wa_create_custom_post_type(){
 	register_post_type('widget-announcement',
 		array(
 				'labels' => array(
-									'name' => __('Announcements', 'widget-announcements'),
-									'singular_name' => __('Announcement', 'widget-announcements'),
-									'add_new' => __('Add New', 'widget-announcements'),
-									'add_new_item' => __('Add New Announcement', 'widget-announcements'),
-									'edit' => __('Edit', 'widget-announcements'),
-									'edit_item' => __('Edit Announcement', 'widget-announcements'),
-									'new_item' => __('New Announcement', 'widget-announcements'),
-									'view' => __('View', 'widget-announcements'),
-									'view_item' => __('View Announcement', 'widget-announcements'),
-									'search_items' => __('Search Announcement', 'widget-announcements'),
-									'not_found' => __('No Announcement found', 'widget-announcements'),
-									'not_found_in_trash' => __('No Announcement found in Trash', 'widget-announcements'),
-									'parent' => __('Parent Announcement', 'widget-announcements')
+									'name' => esc_html__('Announcements', 'widget-announcements'),
+									'singular_name' => esc_html__('Announcement', 'widget-announcements'),
+									'add_new' => esc_html__('Add New', 'widget-announcements'),
+									'add_new_item' => esc_html__('Add New Announcement', 'widget-announcements'),
+									'edit' => esc_html__('Edit', 'widget-announcements'),
+									'edit_item' => esc_html__('Edit Announcement', 'widget-announcements'),
+									'new_item' => esc_html__('New Announcement', 'widget-announcements'),
+									'view' => esc_html__('View', 'widget-announcements'),
+									'view_item' => esc_html__('View Announcement', 'widget-announcements'),
+									'search_items' => esc_html__('Search Announcement', 'widget-announcements'),
+									'not_found' => esc_html__('No Announcement found', 'widget-announcements'),
+									'not_found_in_trash' => esc_html__('No Announcement found in Trash', 'widget-announcements'),
+									'parent' => esc_html__('Parent Announcement', 'widget-announcements')
 								),
 			'public' => false,
 			'exclude_from_search' => true,
@@ -293,7 +303,7 @@ function azrcrv_wa_current_screen_callback($screen) {
  */ 
 function azrcrv_wa_admin_post_excerpt_change_labels($translation, $original){
 	if ('Excerpt' == $original){
-		return __('Text after announcement', 'widget-announcements');
+		return esc_html__('Text after announcement', 'widget-announcements');
 	}else{
 		$pos = strpos($original, 'Excerpts are optional hand-crafted summaries of your');
 
@@ -361,7 +371,7 @@ function azrcrv_wa_render_tweet_metabox() {
 								>
 							</p>
 							<p>
-								<?php printf(__('To regenerate tweet blank the field and update post.', 'widget-announcements'), '%s'); ?>
+								<?php printf(esc_html__('To regenerate tweet blank the field and update post.', 'widget-announcements'), '%s'); ?>
 							</p>
 		
 							<p>
@@ -387,7 +397,7 @@ function azrcrv_wa_render_tweet_metabox() {
 								
 								<div style="width: 100%; display: block; ">
 									<div style="width: 100%; display: block; padding-bottom: 12px; ">
-										<?php _e('Select up to four images to include with tweet; if the <em>Use Featured Image</em> option is marked and a featured image set, only the first three media images from below will be used.', 'widget-announcements'); ?>
+										<?php esc_html_e('Select up to four images to include with tweet; if the <em>Use Featured Image</em> option is marked and a featured image set, only the first three media images from below will be used.', 'widget-announcements'); ?>
 									</div>
 									<?php
 										foreach ($tweet_media AS $media_key => $media){
@@ -395,8 +405,8 @@ function azrcrv_wa_render_tweet_metabox() {
 											echo '<div style="float: left; width: 170px; text-align: center; ">';
 												echo '<img src="'.$media['image'].'" id="tweet-image-'.$key.'" style="width: 160px;"><br />';
 												echo '<input type="hidden" name="tweet-selected-image-'.$key.'" id="tweet-selected-image-'.$key.'" value="'.$media['value'].'" class="regular-text" />';
-												echo '<input type="button" id="azrcrv-wa-upload-image-'.$key.'" class="button upload" value="'.__('Upload', 'widget-announcements').'" />&nbsp;';
-												echo '<input type="button" id="azrcrv-wa-remove-image-'.$key.'" class="button remove" value="'.__( 'Remove', 'widget-announcements').'" />';
+												echo '<input type="button" id="azrcrv-wa-upload-image-'.$key.'" class="button upload" value="'.esc_html__('Upload', 'widget-announcements').'" />&nbsp;';
+												echo '<input type="button" id="azrcrv-wa-remove-image-'.$key.'" class="button remove" value="'.esc_html__( 'Remove', 'widget-announcements').'" />';
 											echo '</div>';
 										}
 									?>
@@ -536,7 +546,7 @@ function azrcrv_wa_render_tweet_history_metabox() {
 							<p>
 							<?php
 							if(metadata_exists('post', $post->ID, '_azrcrv_tt_tweet_history')) {
-								echo '<strong>'.__('Previous Tweets', 'widget-announcements').'</strong><br />';
+								echo '<strong>'.esc_html__('Previous Tweets', 'widget-announcements').'</strong><br />';
 								foreach(array_reverse(get_post_meta($post->ID, '_azrcrv_tt_tweet_history', true )) as $key => $tweet){
 									if (is_array($tweet)){ $tweet_detail = $tweet['tweet']; }else{ $tweet_detail = $tweet; }
 									
@@ -578,7 +588,7 @@ function azrcrv_wa_render_tweet_history_metabox() {
  *
  */
 function azrcrv_wa_add_sidebar_metabox(){
-	add_meta_box('azrcrv-wa-box', __('Repeat announcement', 'widget-announcement'), 'azrcrv_wa_generate_sidebar_metabox', array('widget-announcement'), 'side', 'default');	
+	add_meta_box('azrcrv-wa-box', esc_html__('Repeat announcement', 'widget-announcement'), 'azrcrv_wa_generate_sidebar_metabox', array('widget-announcement'), 'side', 'default');	
 }
 
 /**
@@ -600,65 +610,65 @@ function azrcrv_wa_generate_sidebar_metabox(){
 	<fieldset>
 	
 		<p>
-			<input type="radio" id="none" name="repeat-type" value="none" <?php if (!isset($repeat['type']) OR isset($repeat['type']) AND $repeat['type'] == 'none'){ echo 'checked'; } ?>><label for="none"><?php echo __('No repeat', 'widget-announcement'); ?></label>
+			<input type="radio" id="none" name="repeat-type" value="none" <?php if (!isset($repeat['type']) OR isset($repeat['type']) AND $repeat['type'] == 'none'){ echo 'checked'; } ?>><label for="none"><?php echo esc_html__('No repeat', 'widget-announcement'); ?></label>
 		</p>
 	
 		<p>
-			<input type="radio" id="monthly" name="repeat-type" value="monthly" <?php if (isset($repeat['type']) AND $repeat['type'] == 'monthly'){ echo 'checked'; } ?>><label for="monthly"><?php echo __('Repeat monthly', 'widget-announcement'); ?></label>
+			<input type="radio" id="monthly" name="repeat-type" value="monthly" <?php if (isset($repeat['type']) AND $repeat['type'] == 'monthly'){ echo 'checked'; } ?>><label for="monthly"><?php echo esc_html__('Repeat monthly', 'widget-announcement'); ?></label>
 		</p>
 	
 		<p>
-			<input type="radio" id="annual" name="repeat-type" value="annual" <?php if (isset($repeat['type']) AND $repeat['type'] == 'annual'){ echo 'checked'; } ?>><label for="annual"><?php echo __('Repeat annually', 'widget-announcement'); ?></label>
+			<input type="radio" id="annual" name="repeat-type" value="annual" <?php if (isset($repeat['type']) AND $repeat['type'] == 'annual'){ echo 'checked'; } ?>><label for="annual"><?php echo esc_html__('Repeat annually', 'widget-announcement'); ?></label>
 		</p>
 		
 		<p>
-			<input type="radio" id="goodfriday" name="repeat-type" value="goodfriday" <?php if (isset($repeat['type']) AND $repeat['type'] == 'goodfriday'){ echo 'checked'; } ?>><label for="goodfriday"><?php echo __('Repeat on Good Friday', 'widget-announcement'); ?></label>
+			<input type="radio" id="goodfriday" name="repeat-type" value="goodfriday" <?php if (isset($repeat['type']) AND $repeat['type'] == 'goodfriday'){ echo 'checked'; } ?>><label for="goodfriday"><?php echo esc_html__('Repeat on Good Friday', 'widget-announcement'); ?></label>
 		</p>
 		
 		<p>
-			<input type="radio" id="eastersunday" name="repeat-type" value="eastersunday" <?php if (isset($repeat['type']) AND $repeat['type'] == 'eastersunday'){ echo 'checked'; } ?>><label for="eastersunday"><?php echo __('Repeat on Easter Sunday', 'widget-announcement'); ?></label>
+			<input type="radio" id="eastersunday" name="repeat-type" value="eastersunday" <?php if (isset($repeat['type']) AND $repeat['type'] == 'eastersunday'){ echo 'checked'; } ?>><label for="eastersunday"><?php echo esc_html__('Repeat on Easter Sunday', 'widget-announcement'); ?></label>
 		</p>
 		
 		<p>
-			<input type="radio" id="eastermonday" name="repeat-type" value="eastermonday" <?php if (isset($repeat['type']) AND $repeat['type'] == 'eastermonday'){ echo 'checked'; } ?>><label for="eastermonday"><?php echo __('Repeat on Easter Monday', 'widget-announcement'); ?></label>
+			<input type="radio" id="eastermonday" name="repeat-type" value="eastermonday" <?php if (isset($repeat['type']) AND $repeat['type'] == 'eastermonday'){ echo 'checked'; } ?>><label for="eastermonday"><?php echo esc_html__('Repeat on Easter Monday', 'widget-announcement'); ?></label>
 		</p>
 		
 		<?php
 			$instance = array(
-							'first' => __('1st', 'widget-announcement'),
-							'second' => __('2nd', 'widget-announcement'),
-							'third' => __('3rd', 'widget-announcement'),
-							'fourth' => __('4th', 'widget-announcement'),
+							'first' => esc_html__('1st', 'widget-announcement'),
+							'second' => esc_html__('2nd', 'widget-announcement'),
+							'third' => esc_html__('3rd', 'widget-announcement'),
+							'fourth' => esc_html__('4th', 'widget-announcement'),
 						);
 			
 			$days = array(
-							'Sunday' => __('Sunday', 'widget-announcement'),
-							'Monday' => __('Monday', 'widget-announcement'),
-							'Tuesday' => __('Tuesday', 'widget-announcement'),
-							'Wednesday' => __('Wednesday', 'widget-announcement'),
-							'Thursday' => __('Thursday', 'widget-announcement'),
-							'Friday' => __('Friday', 'widget-announcement'),
-							'Saturday' => __('Saturday', 'widget-announcement'),
+							'Sunday' => esc_html__('Sunday', 'widget-announcement'),
+							'Monday' => esc_html__('Monday', 'widget-announcement'),
+							'Tuesday' => esc_html__('Tuesday', 'widget-announcement'),
+							'Wednesday' => esc_html__('Wednesday', 'widget-announcement'),
+							'Thursday' => esc_html__('Thursday', 'widget-announcement'),
+							'Friday' => esc_html__('Friday', 'widget-announcement'),
+							'Saturday' => esc_html__('Saturday', 'widget-announcement'),
 						);
 			
 			$months = array(
-							1 => __('Jan', 'widget-announcement'),
-							2 => __('Feb', 'widget-announcement'),
-							3 => __('Mar', 'widget-announcement'),
-							4 => __('Apr', 'widget-announcement'),
-							5 => __('May', 'widget-announcement'),
-							6 => __('Jun', 'widget-announcement'),
-							7 => __('Jul', 'widget-announcement'),
-							8 => __('Aug', 'widget-announcement'),
-							9 => __('Sept', 'widget-announcement'),
-							10 => __('Oct', 'widget-announcement'),
-							11 => __('Nov', 'widget-announcement'),
-							12 => __('Dec', 'widget-announcement'),
+							1 => esc_html__('Jan', 'widget-announcement'),
+							2 => esc_html__('Feb', 'widget-announcement'),
+							3 => esc_html__('Mar', 'widget-announcement'),
+							4 => esc_html__('Apr', 'widget-announcement'),
+							5 => esc_html__('May', 'widget-announcement'),
+							6 => esc_html__('Jun', 'widget-announcement'),
+							7 => esc_html__('Jul', 'widget-announcement'),
+							8 => esc_html__('Aug', 'widget-announcement'),
+							9 => esc_html__('Sept', 'widget-announcement'),
+							10 => esc_html__('Oct', 'widget-announcement'),
+							11 => esc_html__('Nov', 'widget-announcement'),
+							12 => esc_html__('Dec', 'widget-announcement'),
 						);
 		?>
 		
 		<p>
-			<input type="radio" id="monthnday" name="repeat-type" value="monthnday" <?php if (isset($repeat['type']) AND $repeat['type'] == 'monthnday'){ echo 'checked'; } ?>><label for="monthnday"><?php echo __('Repeat monthly on <em>n day</em> of month', 'widget-announcement'); ?></label>
+			<input type="radio" id="monthnday" name="repeat-type" value="monthnday" <?php if (isset($repeat['type']) AND $repeat['type'] == 'monthnday'){ echo 'checked'; } ?>><label for="monthnday"><?php echo esc_html__('Repeat monthly on <em>n day</em> of month', 'widget-announcement'); ?></label>
 			
 			<?php
 				echo '<span style="margin-left: 20px; "><select name="month-repeat-instance">';
@@ -690,7 +700,7 @@ function azrcrv_wa_generate_sidebar_metabox(){
 		</p>
 		
 		<p>
-			<input type="radio" id="annualnday" name="repeat-type" value="annualnday" <?php if (isset($repeat['type']) AND $repeat['type'] == 'annualnday'){ echo 'checked'; } ?>><label for="annualnday"><?php echo __('Repeat annually on <em>n day</em> of month', 'widget-announcement'); ?></label>
+			<input type="radio" id="annualnday" name="repeat-type" value="annualnday" <?php if (isset($repeat['type']) AND $repeat['type'] == 'annualnday'){ echo 'checked'; } ?>><label for="annualnday"><?php echo esc_html__('Repeat annually on <em>n day</em> of month', 'widget-announcement'); ?></label>
 			
 			<?php
 				echo '<span style="margin-left: 20px; "><select name="annual-repeat-instance">';
@@ -794,7 +804,7 @@ function azrcrv_wa_add_plugin_action_link($links, $file){
 	}
 
 	if ($file == $this_plugin){
-		$settings_link = '<a href="'.admin_url('admin.php?page=azrcrv-wa').'"><img src="'.plugins_url('/pluginmenu/images/logo.svg', __FILE__).'" style="padding-top: 2px; margin-right: -5px; height: 16px; width: 16px;" alt="azurecurve" />'.__('Settings' ,'widget-announcements').'</a>';
+		$settings_link = '<a href="'.admin_url('admin.php?page=azrcrv-wa').'"><img src="'.plugins_url('/pluginmenu/images/logo.svg', __FILE__).'" style="padding-top: 2px; margin-right: -5px; height: 16px; width: 16px;" alt="azurecurve" />'.esc_html__('Settings' ,'widget-announcements').'</a>';
 		array_unshift($links, $settings_link);
 	}
 
@@ -812,8 +822,8 @@ function azrcrv_wa_create_admin_menu(){
 	// add settings to announcements submenu
 	add_submenu_page(
 						'edit.php?post_type=widget-announcement'
-						,__('Widget Announcement Settings', 'widget-announcements')
-						,__('Settings', 'widget-announcements')
+						,esc_html__('Widget Announcement Settings', 'widget-announcements')
+						,esc_html__('Settings', 'widget-announcements')
 						,'manage_options'
 						,'azrcrv-wa'
 						,'azrcrv_wa_display_options'
@@ -822,8 +832,8 @@ function azrcrv_wa_create_admin_menu(){
 	// add settings to azurecurve menu
 	add_submenu_page(
 						"azrcrv-plugin-menu"
-						,__("Widget Announcements Settings", "widget-announcements")
-						,__("Widget Announcements", "widget-announcements")
+						,esc_html__("Widget Announcements Settings", "widget-announcements")
+						,esc_html__("Widget Announcements", "widget-announcements")
 						,'manage_options'
 						,'azrcrv-wa'
 						,'azrcrv_wa_display_options'
@@ -838,7 +848,7 @@ function azrcrv_wa_create_admin_menu(){
  */
 function azrcrv_wa_display_options(){
 	if (!current_user_can('manage_options')){
-        wp_die(__('You do not have sufficient permissions to access this page.', 'widget-announcements'));
+        wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'widget-announcements'));
     }
 	
 	// Retrieve plugin configuration options from database
@@ -858,7 +868,7 @@ function azrcrv_wa_display_options(){
 			</h1>
 			<?php if(isset($_GET['settings-updated'])){ ?>
 				<div class="notice notice-success is-dismissible">
-					<p><strong><?php _e('Settings have been saved.', 'widget-announcements'); ?></strong></p>
+					<p><strong><?php esc_html_e('Settings have been saved.', 'widget-announcements'); ?></strong></p>
 				</div>
 			<?php } ?>
 			<form method="post" action="admin-post.php">
@@ -869,12 +879,13 @@ function azrcrv_wa_display_options(){
 				<?php wp_nonce_field('azrcrv-wa', 'azrcrv-wa-nonce'); ?>
 				
 				<p>
-					<?php printf(__('%s allows you to add a widget which can be used to announce holidays, events, achievements and notable historical figures in a widget.', 'widget-announcements'), 'Widget Announcements'); ?>
+					<?php printf(esc_html__('%s allows you to add a widget which can be used to announce holidays, events, achievements and notable historical figures in a widget.', 'widget-announcements'), 'Widget Announcements'); ?>
 				</p>
 				
 				<p>
 					<?php
 						_e('Announcements can be made:
+					<ul>
 					<li>One off</li>
 					<li>Monthly</li>
 					<li>Annually</li>
@@ -882,7 +893,8 @@ function azrcrv_wa_display_options(){
 					<li>Easter Sunday</li>
 					<li>Easter Monday</li>
 					<li>Monthly on the nth day (e.g. 2nd Wednesday)</li>
-					<li>Annually on the nth day of the month (e.g. 4th Thursday November)</li>', 'widget-announcements');
+					<li>Annually on the nth day of the month (e.g. 4th Thursday November)</li>
+					</ul>', 'widget-announcements');
 					?>
 				</p>
 				<p> 
@@ -896,10 +908,10 @@ function azrcrv_wa_display_options(){
 					?>
 				</p>
 				<p>
-					<?php printf(__('Integration with the %s plugin from %s can be enabled to send announcements to Twitter.'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/">To Twitter</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?>
+					<?php printf(esc_html__('Integration with the %s plugin from %s can be enabled to send announcements to Twitter.'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/">To Twitter</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?>
 				</p>
 				<p>
-					<?php printf(__('Integration with the %s plugin from %s can be enabled to use the &lt;!--readmore--&gt; tag in the <em>content</em> and <em>text after announcement</em> fields.'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/">Toggle Show/Hide</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?>
+					<?php printf(esc_html__('Integration with the %s plugin from %s can be enabled to use the &lt;!--readmore--&gt; tag in the <em>content</em> and <em>text after announcement</em> fields.'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/">Toggle Show/Hide</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?>
 				</p>
 				
 				<?php
@@ -918,8 +930,8 @@ function azrcrv_wa_display_options(){
 						}
 					?>
 					<h2 class="azrcrv-wa-nav-wrapper">
-						<a class="azrcrv-wa-nav-tab <?php echo $tab1active; ?>" data-item=".tabs-1" href="#tabs-1"><?php _e('Settings', 'widget-announcements') ?></a>
-						<a class="azrcrv-wa-nav-tab <?php echo $tab2active; ?>" data-item=".tabs-2" href="#tabs-2"><?php _e('To Twitter Integration', 'widget-announcements') ?></a>
+						<a class="azrcrv-wa-nav-tab <?php echo $tab1active; ?>" data-item=".tabs-1" href="#tabs-1"><?php esc_html_e('Settings', 'widget-announcements') ?></a>
+						<a class="azrcrv-wa-nav-tab <?php echo $tab2active; ?>" data-item=".tabs-2" href="#tabs-2"><?php esc_html_e('To Twitter Integration', 'widget-announcements') ?></a>
 					</h2>
 					
 					<div class='azrcrv-wa-tab-wrapper'>
@@ -930,13 +942,13 @@ function azrcrv_wa_display_options(){
 								
 								<tr>
 									<th>
-										<h3><?php _e('Widget Defaults', 'widget-announcements'); ?></h3>
+										<h3><?php esc_html_e('Widget Defaults', 'widget-announcements'); ?></h3>
 									</th>
 								</tr>
 								
 								<tr>
 									<th scope="row"><label for="widget-width">
-										<?php _e('Width', 'widget-announcements'); ?></label>
+										<?php esc_html_e('Width', 'widget-announcements'); ?></label>
 									</th>
 									<td>
 										<input name="widget-width" type="number" min="1" id="widget-width" value="<?php if (strlen($options['widget']['width']) > 0){ echo sanitize_text_field($options['widget']['width']); } ?>" class="small-text" /> px
@@ -945,7 +957,7 @@ function azrcrv_wa_display_options(){
 								
 								<tr>
 									<th scope="row"><label for="widget-height">
-										<?php _e('Height', 'widget-announcements'); ?></label>
+										<?php esc_html_e('Height', 'widget-announcements'); ?></label>
 									</th>
 									<td>
 										<input name="widget-height" type="number" min="1" id="widget-height" value="<?php if (strlen($options['widget']['height']) > 0){ echo sanitize_text_field($options['widget']['height']); } ?>" class="small-text" /> px
@@ -954,22 +966,22 @@ function azrcrv_wa_display_options(){
 								
 								<tr>
 									<th colspan=2>
-										<h3><?php _e('Integration', 'widget-announcements'); ?></h3>
+										<h3><?php esc_html_e('Integration', 'widget-announcements'); ?></h3>
 									</th>
 								</tr>
 								
 								<tr>
 									<th scope="row">
 										<label for="to-twitter-integration">
-											<?php _e('Enable To Twitter', 'widget-announcements'); ?>
+											<?php esc_html_e('Enable To Twitter', 'widget-announcements'); ?>
 										</label>
 									</th>
 									<td>
 										<?php
 											if ($to_twitter_enabled){ ?>
-												<label for="to-twitter-integration"><input name="to-twitter-integration" type="checkbox" id="to-twitter-integration" value="1" <?php checked('1', $options['to-twitter']['integrate']); ?> /><?php printf(__('Enable integration with %s from %s?', 'widget-announcements'), '<a href="admin.php?page=azrcrv-tt">To Twitter</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?></label>
+												<label for="to-twitter-integration"><input name="to-twitter-integration" type="checkbox" id="to-twitter-integration" value="1" <?php checked('1', $options['to-twitter']['integrate']); ?> /><?php printf(esc_html__('Enable integration with %s from %s?', 'widget-announcements'), '<a href="admin.php?page=azrcrv-tt">To Twitter</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?></label>
 											<?php }else{
-												printf(__('%s from %s not installed/activated.', 'widget-announcements'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/">To Twitter</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>');
+												printf(esc_html__('%s from %s not installed/activated.', 'widget-announcements'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/">To Twitter</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>');
 											}
 										?>
 									</td>
@@ -978,15 +990,15 @@ function azrcrv_wa_display_options(){
 								<tr>
 									<th scope="row">
 										<label for="toggle-showhide-integration">
-											<?php _e('Enable Toggle Show/Hide', 'widget-announcements'); ?>
+											<?php esc_html_e('Enable Toggle Show/Hide', 'widget-announcements'); ?>
 										</label>
 									</th>
 									<td>
 										<?php
 											if ($toggle_showhide_enabled){ ?>
-												<label for="toggle-showhide-integration"><input name="toggle-showhide-integration" type="checkbox" id="toggle-showhide-integration" value="1" <?php checked('1', $options['toggle-showhide']['integrate']); ?> /><?php printf(__('Enable integration with %s from %s?', 'widget-announcements'), '<a href="admin.php?page=azrcrv-tt">Toggle Show/Hide</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?></label>
+												<label for="toggle-showhide-integration"><input name="toggle-showhide-integration" type="checkbox" id="toggle-showhide-integration" value="1" <?php checked('1', $options['toggle-showhide']['integrate']); ?> /><?php printf(esc_html__('Enable integration with %s from %s?', 'widget-announcements'), '<a href="admin.php?page=azrcrv-tsh">Toggle Show/Hide</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?></label>
 											<?php }else{
-												printf(__('%s from %s not installed/activated.', 'widget-announcements'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/">Toggle Show/Hide</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>');
+												printf(esc_html__('%s from %s not installed/activated.', 'widget-announcements'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/">Toggle Show/Hide</a>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>');
 											}
 										?>
 									</td>
@@ -1004,50 +1016,50 @@ function azrcrv_wa_display_options(){
 								<tr>
 									<th scope="row">
 										<label for="to-twitter-tweet">
-											<?php _e('Tweet', 'widget-announcements'); ?>
+											<?php esc_html_e('Tweet', 'widget-announcements'); ?>
 										</label>
 									</th>
 									<td>
-										<label for="to-twitter-tweet"><input name="to-twitter-tweet" type="checkbox" id="to-twitter-tweet" value="1" <?php checked('1', $options['to-twitter']['tweet']); ?> /><?php _e('Send tweet at below time?', 'widget-announcements'); ?></label>
+										<label for="to-twitter-tweet"><input name="to-twitter-tweet" type="checkbox" id="to-twitter-tweet" value="1" <?php checked('1', $options['to-twitter']['tweet']); ?> /><?php esc_html_e('Send tweet at below time?', 'widget-announcements'); ?></label>
 									</td>
 								</tr>
 								
 								<tr>
 									<th scope="row">
 										<label for="to-twitter-tweet-time">
-											<?php _e('Tweet Time', 'widget-announcements'); ?>
+											<?php esc_html_e('Tweet Time', 'widget-announcements'); ?>
 										</label>
 									</th>
 									<td>										
-										<input type="time" id="to-twitter-tweet-time" name="to-twitter-tweet-time" value="<?php _e($options['to-twitter']['tweet-time']); ?>" required />
+										<input type="time" id="to-twitter-tweet-time" name="to-twitter-tweet-time" value="<?php esc_html_e($options['to-twitter']['tweet-time']); ?>" required />
 									</td>
 								</tr>
 								
 								<tr>
 									<th scope="row">
 										<label for="to-twitter-retweet">
-											<?php _e('Reweet', 'widget-announcements'); ?>
+											<?php esc_html_e('Reweet', 'widget-announcements'); ?>
 										</label>
 									</th>
 									<td>
-										<label for="to-twitter-retweet"><input name="to-twitter-retweet" type="checkbox" id="to-twitter-retweet" value="1" <?php checked('1', $options['to-twitter']['retweet']); ?> /><?php _e('Send retweet at below time?', 'widget-announcements'); ?></label>
+										<label for="to-twitter-retweet"><input name="to-twitter-retweet" type="checkbox" id="to-twitter-retweet" value="1" <?php checked('1', $options['to-twitter']['retweet']); ?> /><?php esc_html_e('Send retweet at below time?', 'widget-announcements'); ?></label>
 									</td>
 								</tr>
 								
 								<tr>
 									<th scope="row">
 										<label for="to-twitter-retweet-time">
-											<?php _e('Tweet Time', 'widget-announcements'); ?>
+											<?php esc_html_e('Tweet Time', 'widget-announcements'); ?>
 										</label>
 									</th>
 									<td>										
-										<input type="time" id="to-twitter-retweet-time" name="to-twitter-retweet-time" value="<?php _e($options['to-twitter']['retweet-time']); ?>" required />
+										<input type="time" id="to-twitter-retweet-time" name="to-twitter-retweet-time" value="<?php esc_html_e($options['to-twitter']['retweet-time']); ?>" required />
 									</td>
 								</tr>
 								
 								<tr>
 									<th scope="row"><label for="to-twitter-retweet-prefix">
-										<?php _e('Retweet Prefix', 'widget-announcements'); ?></label>
+										<?php esc_html_e('Retweet Prefix', 'widget-announcements'); ?></label>
 									</th>
 									<td>
 										<input name="to-twitter-retweet-prefix" type="text" id="to-twitter-retweet-prefix" value="<?php if (strlen($options['to-twitter']['retweet-prefix']) > 0){ echo sanitize_text_field($options['to-twitter']['retweet-prefix']); } ?>" class="regular-text" />
@@ -1056,7 +1068,7 @@ function azrcrv_wa_display_options(){
 								
 								<tr>
 									<th scope="row"><label for="to-twitter-tweet-format">
-										<?php _e('Tweet Format', 'widget-announcements'); ?></label>
+										<?php esc_html_e('Tweet Format', 'widget-announcements'); ?></label>
 									</th>
 									<td>
 										<input name="to-twitter-tweet-format" type="text" id="to-twitter-tweet-format" value="<?php if (strlen($options['to-twitter']['tweet-format']) > 0){ echo sanitize_text_field($options['to-twitter']['tweet-format']); } ?>" class="regular-text" />
@@ -1066,11 +1078,11 @@ function azrcrv_wa_display_options(){
 								<tr>
 									<th scope="row">
 										<label for="to-twitter-use-featured-image">
-											<?php _e('Use Featured Imge', 'widget-announcements'); ?>
+											<?php esc_html_e('Use Featured Imge', 'widget-announcements'); ?>
 										</label>
 									</th>
 									<td>
-										<label for="to-twitter-use-featured-image"><input name="to-twitter-use-featured-image" type="checkbox" id="to-twitter-use-featured-image" value="1" <?php checked('1', $options['to-twitter']['use-featured-image']); ?> /><?php _e('Use featured image? Only three other media images can be included in the tweet.', 'widget-announcements'); ?></label>
+										<label for="to-twitter-use-featured-image"><input name="to-twitter-use-featured-image" type="checkbox" id="to-twitter-use-featured-image" value="1" <?php checked('1', $options['to-twitter']['use-featured-image']); ?> /><?php esc_html_e('Use featured image? Only three other media images can be included in the tweet.', 'widget-announcements'); ?></label>
 									</td>
 								</tr>
 								
@@ -1079,19 +1091,65 @@ function azrcrv_wa_display_options(){
 				</div>
 				<?php } ?>
 				
-				<input type="submit" value="<? _e('Save Changes', 'widget-announcements'); ?>" class="button-primary"/>
+				<input type="submit" value="<? esc_html_e('Save Changes', 'widget-announcements'); ?>" class="button-primary"/>
 				
 			</form>
 		</fieldset>
 	</div>
 	
+	<div id="azrcrv-wa-general" class="wrap">
+		<h1>
+			<?php
+				echo '<a href="https://development.azurecurve.co.uk/classicpress-plugins/"><img src="'.plugins_url('/pluginmenu/images/logo.svg', __FILE__).'" style="padding-right: 6px; height: 20px; width: 20px;" alt="azurecurve" /></a>';
+				esc_html_e(get_admin_page_title());
+			?>
+		</h1>
+		
+		<?php
+		if(isset($_GET['settings-updated'])){
+			echo '<div class="notice notice-success is-dismissible"><p><strong>'.esc_html__('Settings have been saved.', 'page-index').'</strong></p></div>';
+		}
+		?>
+		
+		<form method="post" action="admin-post.php">
+			<input type="hidden" name="action" value="azrcrv_wa_save_options" />
+			<input name="page_options" type="hidden" value="azrcrv-wa" />
+			
+			<!-- Adding security through hidden referrer field -->
+			<?php wp_nonce_field('azrcrv-wa', 'azrcrv-wa-nonce'); ?>
+			
+			<?php
+			$tab_1_label = 'Settings';
+			$tab_1 = 'tab text for tab 1';
+			$tab_2_label = 'To Twitter Integration';
+			$tab_2 = 'tab text for tab 2';
+			?>
+		
+			<div id="tabs" class="ui-tabs">
+				<ul class="ui-tabs-nav ui-widget-header" role="tablist">
+					<li class="ui-state-default ui-state-active" aria-controls="tab-panel-1" aria-labelledby="tab-1" aria-selected="true" aria-expanded="true" role="tab">
+						<a id="tab-1" class="ui-tabs-anchor" href="#tab-panel-1"><?php echo $tab_1_label; ?></a>
+					</li>
+					<li class="ui-state-default" aria-controls="tab-panel-2" aria-labelledby="tab-2" aria-selected="false" aria-expanded="false" role="tab">
+						<a id="tab-2" class="ui-tabs-anchor" href="#tab-panel-2"><?php echo $tab_2_label; ?></a>
+					</li>
+				</ul>
+				<div id="tab-panel-1" class="ui-tabs-scroll" role="tabpanel" aria-hidden="false">
+					<?php echo $tab_1; ?>
+				</div>
+				<div id="tab-panel-2" class="ui-tabs-scroll ui-tabs-hidden" role="tabpanel" aria-hidden="true">
+					<?php echo $tab_2; ?>
+				</div>
+			</div>
+			
+			<input type="submit" value="<?php esc_html_e('Save Settings', 'page-index'); ?>" class="button-primary"/>
+		</form>
+	</div>
+	
 	<div>
 		<p>
-		&nbsp;
-		</p>
-		<p>
 			<label for="additional-plugins">
-				<?php printf(__('This plugin integrates with the following plugins from %s:', 'widget-announcements'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?>
+				<?php printf(esc_html__('This plugin integrates with the following plugins from %s:', 'widget-announcements'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?>
 			</label>
 			<ul class='azrcrv-plugin-index'>
 				<li>
@@ -1137,7 +1195,7 @@ function azrcrv_wa_is_plugin_active($plugin){
 function azrcrv_wa_save_options(){
 	// Check that user has proper security level
 	if (!current_user_can('manage_options')){
-		wp_die(__('You do not have permissions to perform this action', 'widget-announcements'));
+		wp_die(esc_html__('You do not have permissions to perform this action', 'widget-announcements'));
 	}
 	// Check that nonce field created in configuration form is present
 	if (! empty($_POST) && check_admin_referer('azrcrv-wa', 'azrcrv-wa-nonce')){
@@ -1297,7 +1355,7 @@ class azrcrv_wa_register_widget extends WP_Widget {
 		parent::__construct('azrcrv-wa',
 							 'Widget Announcements by azurecurve',
 							 array('description' =>
-									__('Announcements in a widget', 'widget-announcements')));
+									esc_html__('Announcements in a widget', 'widget-announcements')));
 	}
 	
 	/**
@@ -1361,7 +1419,7 @@ class azrcrv_wa_register_widget extends WP_Widget {
 		<p>
 			<label for="<?php echo 
 						$this->get_field_name('width'); ?>">
-			<?php _e('Width:', 'events'); ?>&nbsp;			
+			<?php esc_html_e('Width:', 'events'); ?>&nbsp;			
 			<input type="number" id="<?php echo $this->get_field_name('width'); ?>" name="<?php echo $this->get_field_name('width'); ?>" class="small-text" value="<?php echo $width; ?>" />
 			</label>
 		</p>
@@ -1369,7 +1427,7 @@ class azrcrv_wa_register_widget extends WP_Widget {
 		<p>
 			<label for="<?php echo 
 						$this->get_field_name('height'); ?>">
-			<?php _e('Height:', 'events'); ?>&nbsp;			
+			<?php esc_html_e('Height:', 'events'); ?>&nbsp;			
 			<input type="number" id="<?php echo $this->get_field_name('height'); ?>" name="<?php echo $this->get_field_name('height'); ?>" class="small-text" value="<?php echo $height; ?>" />
 			</label>
 		</p>
@@ -1516,7 +1574,7 @@ function azrcrv_wa_add_to_twitter_sidebar_metabox(){
 		$options = azrcrv_wa_get_option('azrcrv-wa');
 		
 		if ($options['to-twitter']['integrate'] == 1){
-			add_meta_box('azrcrv-wa-to-twitter-box', __('Autopost Tweet', 'widget-announcements'), 'azrcrv_wa_generate_to_twitter_sidebar_metabox', 'widget-announcement', 'side', 'default');
+			add_meta_box('azrcrv-wa-to-twitter-box', esc_html__('Autopost Tweet', 'widget-announcements'), 'azrcrv_wa_generate_to_twitter_sidebar_metabox', 'widget-announcement', 'side', 'default');
 		}
 		
 	}
@@ -1562,7 +1620,7 @@ function azrcrv_wa_generate_to_twitter_sidebar_metabox(){
 		}
 		echo '<p>
 				<label>
-					<input type="checkbox" name="use-featured-image" '.$checked.' />  '.__('Use featured image as tweet media image 1?', 'widget-announcements').'
+					<input type="checkbox" name="use-featured-image" '.$checked.' />  '.esc_html__('Use featured image as tweet media image 1?', 'widget-announcements').'
 				</label>';
 		echo '</p>';
 		
@@ -1571,10 +1629,10 @@ function azrcrv_wa_generate_to_twitter_sidebar_metabox(){
 		}else{
 			$checked = '';
 		}
-		echo '<p><label><input type="checkbox" name="tweet" '.$checked.' />  '.__('Tweet announcement?', 'widget-announcements').'</label></p>
+		echo '<p><label><input type="checkbox" name="tweet" '.$checked.' />  '.esc_html__('Tweet announcement?', 'widget-announcements').'</label></p>
 		
 		<p>
-			'.__('Tweet Time: ', 'widget-announcements').'
+			'.esc_html__('Tweet Time: ', 'widget-announcements').'
 			
 			<input type="time" id="tweet-time" name="tweet-time" value="'.esc_html($tweet_time).'" required />
 		</p>';
@@ -1584,9 +1642,9 @@ function azrcrv_wa_generate_to_twitter_sidebar_metabox(){
 		}else{
 			$checked = '';
 		}
-		echo '<p><label><input type="checkbox" name="retweet" '.$checked.' />  '.__('Retweet announcement?', 'widget-announcements').'</label></p>
+		echo '<p><label><input type="checkbox" name="retweet" '.$checked.' />  '.esc_html__('Retweet announcement?', 'widget-announcements').'</label></p>
 		<p>
-			'.__('Retweet Time: ', 'widget-announcements').'
+			'.esc_html__('Retweet Time: ', 'widget-announcements').'
 			
 			<input type="time" id="retweet-time" name="retweet-time" value="'.esc_html($retweet_time).'" required />
 		</p>';

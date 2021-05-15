@@ -1,19 +1,26 @@
 /*
  * Tabs
  */
-jQuery(document).ready(function() {
+jQuery(function($) {
+	'use strict';
 	
-	jQuery('.azrcrv-wa-nav-wrapper .azrcrv-wa-nav-tab').on('click',function(event) {
-		var item_to_show = '.azrcrv-wa-tab' + jQuery(this).data('item');
-
-		jQuery(this).siblings().removeClass('azrcrv-wa-nav-tab-active');
-		jQuery(this).addClass("azrcrv-wa-nav-tab-active");
-		
-		jQuery(item_to_show).siblings().css('display','none');
-		jQuery(item_to_show).css('display','block');
+	$('#tabs ul li a').on('keyup click', function(e) {
+        if (e.key === 'Enter' || e.type === 'click') {
+			var id = $(this).attr('href');
+			$('.ui-state-active').removeClass('ui-state-active').attr('aria-selected', 'false').attr('aria-expanded', 'false');
+			$(this).parent('li').addClass('ui-state-active').attr('aria-selected', 'true').attr('aria-expanded', 'true');
+			$(this).closest('ul').siblings().addClass('ui-tabs-hidden').attr('aria-hidden', 'true');
+			$(id).removeClass('ui-tabs-hidden').attr('aria-hidden', 'false');
+			e.preventDefault();
+		}
 	});
 	
+	$('#azrcrv-tabs ul li a').hover(
+		function() { $(this).addClass('ui-state-hover'); },
+		function() { $(this).removeClass('ui-state-hover'); }
+	);
 });
+
 
 /*
  * Adapted from: http://mikejolley.com/2012/12/using-the-new-wordpress-3-5-media-uploader-in-plugins/
@@ -21,9 +28,9 @@ jQuery(document).ready(function() {
  * Image 1
  */
 jQuery(document).ready(function($){  
-// Uploading files
-var file_frame;
- 
+	// Uploading files
+	var file_frame;
+	
 	$('#azrcrv-wa-upload-image-1').on('click', function( event ){
  
 		event.preventDefault();
@@ -72,9 +79,9 @@ var file_frame;
  * Image 2
  */
 jQuery(document).ready(function($){  
-// Uploading files
-var file_frame;
- 
+	// Uploading files
+	var file_frame;
+	
 	$('#azrcrv-wa-upload-image-2').on('click', function( event ){
  
 		event.preventDefault();
@@ -123,9 +130,9 @@ var file_frame;
  * Image 3
  */
 jQuery(document).ready(function($){  
-// Uploading files
-var file_frame;
- 
+	// Uploading files
+	var file_frame;
+	
 	$('#azrcrv-wa-upload-image-3').on('click', function( event ){
  
 		event.preventDefault();
@@ -174,9 +181,9 @@ var file_frame;
  * Image 4
  */
 jQuery(document).ready(function($){  
-// Uploading files
-var file_frame;
- 
+	// Uploading files
+	var file_frame;
+	
 	$('#azrcrv-wa-upload-image-4').on('click', function( event ){
  
 		event.preventDefault();

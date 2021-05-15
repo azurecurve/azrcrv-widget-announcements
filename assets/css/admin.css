@@ -1,35 +1,41 @@
-.azrcrv-wa-nav-wrapper{
-	padding-top: 6px;
-	margin-bottom: none;
+.ui-tabs {
+	display: block;
+	position: relative;
+	margin-bottom: 6px;
+	overflow: auto;
 }
-.azrcrv-wa-nav-tab{
-	padding: 6px 12px;
+.ui-tabs .ui-tabs-nav {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: left;
+    background: transparent;
+    border: none;
+	font-size: 1.3em;
+}
+.ui-tabs-nav .ui-state-default a{
 	border: 1px solid grey;
 	border-bottom: 4px solid grey;
-	text-decoration: none;
 	color: grey;
+	background: transparent;
 }
-.azrcrv-wa-nav-tab-active{
-	border: 1px solid grey;
+.ui-tabs-nav .ui-state-active a{
+	border: 1px solid #007FFF;
 	border-bottom: 4px solid #007FFF;
 	color: #007FFF;
+	background: transparent;
 }
-.azrcrv-wa-nav-tab:hover{
-	border: 1px solid grey;
+.ui-tabs-nav .ui-state-default a:hover{
+	border: 1px solid #ff8000;
 	border-bottom: 4px solid #ff8000;
 	color: #ff8000;
+	background: transparent;
+	font-weight: 700;
 }
-.azrcrv-wa-tab-wrapper{
+.ui-tabs-scroll {
+	margin-top: -1px;
 	border: 1px solid grey;
-	margin-top: -5px;
-	margin-bottom: 6px;
+	padding: 12px;
 }
-.azrcrv-wa-tab{
-	padding: 0 15px;
-}
-.azrcrv-wa-tab-invisible{
+.ui-tabs-hidden{
 	display: none;
-}
-img.azrcrv-wa{
-	border: none;
 }
