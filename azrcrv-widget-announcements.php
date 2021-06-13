@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------------------
  * Plugin Name: Widget Announcements
  * Description: Announce holidays, events, achievements and notable historical figures in a widget.
- * Version: 1.5.0
+ * Version: 1.5.1
  * Author: azurecurve
  * Author URI: https://development.azurecurve.co.uk/classicpress-plugins/
  * Plugin URI: https://development.azurecurve.co.uk/classicpress-plugins/azrcrv-widget-announcements/
@@ -1095,83 +1095,6 @@ function azrcrv_wa_display_options(){
 				
 			</form>
 		</fieldset>
-	</div>
-	
-	<div id="azrcrv-wa-general" class="wrap">
-		<h1>
-			<?php
-				echo '<a href="https://development.azurecurve.co.uk/classicpress-plugins/"><img src="'.plugins_url('/pluginmenu/images/logo.svg', __FILE__).'" style="padding-right: 6px; height: 20px; width: 20px;" alt="azurecurve" /></a>';
-				esc_html_e(get_admin_page_title());
-			?>
-		</h1>
-		
-		<?php
-		if(isset($_GET['settings-updated'])){
-			echo '<div class="notice notice-success is-dismissible"><p><strong>'.esc_html__('Settings have been saved.', 'page-index').'</strong></p></div>';
-		}
-		?>
-		
-		<form method="post" action="admin-post.php">
-			<input type="hidden" name="action" value="azrcrv_wa_save_options" />
-			<input name="page_options" type="hidden" value="azrcrv-wa" />
-			
-			<!-- Adding security through hidden referrer field -->
-			<?php wp_nonce_field('azrcrv-wa', 'azrcrv-wa-nonce'); ?>
-			
-			<?php
-			$tab_1_label = 'Settings';
-			$tab_1 = 'tab text for tab 1';
-			$tab_2_label = 'To Twitter Integration';
-			$tab_2 = 'tab text for tab 2';
-			?>
-		
-			<div id="tabs" class="ui-tabs">
-				<ul class="ui-tabs-nav ui-widget-header" role="tablist">
-					<li class="ui-state-default ui-state-active" aria-controls="tab-panel-1" aria-labelledby="tab-1" aria-selected="true" aria-expanded="true" role="tab">
-						<a id="tab-1" class="ui-tabs-anchor" href="#tab-panel-1"><?php echo $tab_1_label; ?></a>
-					</li>
-					<li class="ui-state-default" aria-controls="tab-panel-2" aria-labelledby="tab-2" aria-selected="false" aria-expanded="false" role="tab">
-						<a id="tab-2" class="ui-tabs-anchor" href="#tab-panel-2"><?php echo $tab_2_label; ?></a>
-					</li>
-				</ul>
-				<div id="tab-panel-1" class="ui-tabs-scroll" role="tabpanel" aria-hidden="false">
-					<?php echo $tab_1; ?>
-				</div>
-				<div id="tab-panel-2" class="ui-tabs-scroll ui-tabs-hidden" role="tabpanel" aria-hidden="true">
-					<?php echo $tab_2; ?>
-				</div>
-			</div>
-			
-			<input type="submit" value="<?php esc_html_e('Save Settings', 'page-index'); ?>" class="button-primary"/>
-		</form>
-	</div>
-	
-	<div>
-		<p>
-			<label for="additional-plugins">
-				<?php printf(esc_html__('This plugin integrates with the following plugins from %s:', 'widget-announcements'), '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve</a>'); ?>
-			</label>
-			<ul class='azrcrv-plugin-index'>
-				<li>
-					<?php
-					if ($to_twitter_enabled){
-						echo '<a href="admin.php?page=azrcrv-tt" class="azrcrv-plugin-index">To Twitter</a>';
-					}else{
-						echo '<a href="https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/" class="azrcrv-plugin-index">To Twitter</a>';
-					}
-					?>
-				</li>
-				<li>
-					<?php
-					if ($to_twitter_enabled){
-						echo '<a href="admin.php?page=azrcrv-tsh" class="azrcrv-plugin-index">Toggle Show/Hide</a>';
-					}else{
-						echo '<a href="https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/" class="azrcrv-plugin-index">Toggle Show/Hide</a>';
-					}
-					?>
-				</li>
-			</ul>
-		</p>
 	</div>
 	<?php
 }
