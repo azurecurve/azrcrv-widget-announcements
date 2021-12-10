@@ -19,8 +19,6 @@ Announcements are created as a custom post type and can have details, an image a
 
 Integrates with [To Twitter](https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/) from [azurecurve](https://development.azurecurve.co.uk/classicpress-plugins/) for automatic tweeting of announcement each time the announcement is made and a retweet after a specified amount of time.
 
-== Installation ==
-
 # Installation Instructions
 
  * Download the latest release of the plugin from [GitHub](https://github.com/azurecurve/azrcrv-widget-announcements/releases/latest/).
