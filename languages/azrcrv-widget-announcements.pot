@@ -1,0 +1,440 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Widget Announcements\n"
+"POT-Creation-Date: 2021-12-27 18:26+0000\n"
+"PO-Revision-Date: 2019-02-24 18:29+0000\n"
+"Last-Translator: \n"
+"Language-Team: translate@azurecurve.co.uk\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e;esc_html__;esc_html_e\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: azrcrv-widget-announcements.php:237
+msgid "Category"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:255
+msgid "Announcements"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:256
+msgid "Announcement"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:257
+msgid "Add New"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:258
+msgid "Add New Announcement"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:259
+msgid "Edit"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:260
+msgid "Edit Announcement"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:261
+msgid "New Announcement"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:262
+msgid "View"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:263
+msgid "View Announcement"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:264
+msgid "Search Announcement"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:265
+msgid "No Announcement found"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:266
+msgid "No Announcement found in Trash"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:267
+msgid "Parent Announcement"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:306
+msgid "Text after announcement"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:374
+msgid "To regenerate tweet blank the field and update post."
+msgstr ""
+
+#: azrcrv-widget-announcements.php:400
+msgid ""
+"Select up to four images to include with tweet; if the <em>Use Featured "
+"Image</em> option is marked and a featured image set, only the first "
+"three media images from below will be used."
+msgstr ""
+
+#: azrcrv-widget-announcements.php:408
+msgid "Upload"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:409
+msgid "Remove"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:549
+msgid "Previous Tweets"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:591
+msgid "Repeat announcement"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:613
+msgid "No repeat"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:617
+msgid "Repeat monthly"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:621
+msgid "Repeat annually"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:625
+msgid "Repeat on Good Friday"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:629
+msgid "Repeat on Easter Sunday"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:633
+msgid "Repeat on Easter Monday"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:638
+msgid "1st"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:639
+msgid "2nd"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:640
+msgid "3rd"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:641
+msgid "4th"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:645
+msgid "Sunday"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:646
+msgid "Monday"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:647
+msgid "Tuesday"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:648
+msgid "Wednesday"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:649
+msgid "Thursday"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:650
+msgid "Friday"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:651
+msgid "Saturday"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:655
+msgid "Jan"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:656
+msgid "Feb"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:657
+msgid "Mar"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:658
+msgid "Apr"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:659
+msgid "May"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:660
+msgid "Jun"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:661
+msgid "Jul"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:662
+msgid "Aug"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:663
+msgid "Sept"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:664
+msgid "Oct"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:665
+msgid "Nov"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:666
+msgid "Dec"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:671
+msgid "Repeat monthly on <em>n day</em> of month"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:703
+msgid "Repeat annually on <em>n day</em> of month"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:807 azrcrv-widget-announcements.php:826
+#: azrcrv-widget-announcements.php:933
+msgid "Settings"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:825
+msgid "Widget Announcement Settings"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:835
+msgid "Widget Announcements Settings"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:836
+msgid "Widget Announcements"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:851
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: azrcrv-widget-announcements.php:871
+msgid "Settings have been saved."
+msgstr ""
+
+#: azrcrv-widget-announcements.php:882
+#, php-format
+msgid ""
+"%s allows you to add a widget which can be used to announce holidays, "
+"events, achievements and notable historical figures in a widget."
+msgstr ""
+
+#: azrcrv-widget-announcements.php:887
+msgid ""
+"Announcements can be made:\n"
+"\t\t\t\t\t<ul>\n"
+"\t\t\t\t\t<li>One off</li>\n"
+"\t\t\t\t\t<li>Monthly</li>\n"
+"\t\t\t\t\t<li>Annually</li>\n"
+"\t\t\t\t\t<li>Good Friday</li>\n"
+"\t\t\t\t\t<li>Easter Sunday</li>\n"
+"\t\t\t\t\t<li>Easter Monday</li>\n"
+"\t\t\t\t\t<li>Monthly on the nth day (e.g. 2nd Wednesday)</li>\n"
+"\t\t\t\t\t<li>Annually on the nth day of the month (e.g. 4th Thursday "
+"November)</li>\n"
+"\t\t\t\t\t</ul>"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:902
+msgid ""
+"Announcements are created as a custom post type and can have details, an "
+"image and additional text after the image; images should be narrower than "
+"your widget area."
+msgstr ""
+
+#: azrcrv-widget-announcements.php:907
+msgid ""
+"When creating widgets they can be added to one or more categories; when "
+"adding a widget, select the category to include."
+msgstr ""
+
+#: azrcrv-widget-announcements.php:911
+#, php-format
+msgid ""
+"Integration with the %s plugin from %s can be enabled to send "
+"announcements to Twitter."
+msgstr ""
+
+#: azrcrv-widget-announcements.php:914
+#, php-format
+msgid ""
+"Integration with the %s plugin from %s can be enabled to use the &lt;!--"
+"readmore--&gt; tag in the <em>content</em> and <em>text after "
+"announcement</em> fields."
+msgstr ""
+
+#: azrcrv-widget-announcements.php:934
+msgid "To Twitter Integration"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:945
+msgid "Widget Defaults"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:951
+msgid "Width"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:960
+msgid "Height"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:969
+msgid "Integration"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:976
+msgid "Enable To Twitter"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:982 azrcrv-widget-announcements.php:999
+#, php-format
+msgid "Enable integration with %s from %s?"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:984 azrcrv-widget-announcements.php:1001
+#, php-format
+msgid "%s from %s not installed/activated."
+msgstr ""
+
+#: azrcrv-widget-announcements.php:993
+msgid "Enable Toggle Show/Hide"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1019
+msgid "Tweet"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1023
+msgid "Send tweet at below time?"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1030 azrcrv-widget-announcements.php:1052
+msgid "Tweet Time"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1041
+msgid "Reweet"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1045
+msgid "Send retweet at below time?"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1062
+msgid "Retweet Prefix"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1071
+msgid "Tweet Format"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1081
+msgid "Use Featured Imge"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1085
+msgid ""
+"Use featured image? Only three other media images can be included in the "
+"tweet."
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1094
+msgid "Save Changes"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1121
+msgid "You do not have permissions to perform this action"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1281
+msgid "Announcements in a widget"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1345
+msgid "Width:"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1353
+msgid "Height:"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1500
+msgid "Autopost Tweet"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1546
+msgid "Use featured image as tweet media image 1?"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1555
+msgid "Tweet announcement?"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1558
+msgid "Tweet Time: "
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1568
+msgid "Retweet announcement?"
+msgstr ""
+
+#: azrcrv-widget-announcements.php:1570
+msgid "Retweet Time: "
+msgstr ""
+
+#: libraries/updateclient/UpdateClient.class.php:191
+msgid "Compatible up to:"
+msgstr ""
+
+#: libraries/updateclient/UpdateClient.class.php:192
+msgid "Reviews"
+msgstr ""
+
+#: libraries/updateclient/UpdateClient.class.php:193
+msgid "Read all reviews"
+msgstr ""
+
+#: libraries/updateclient/UpdateClient.class.php:383
+msgid "View details"
+msgstr ""
