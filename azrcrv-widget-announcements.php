@@ -3,8 +3,9 @@
  * ------------------------------------------------------------------------------
  * Plugin Name:		Widget Announcements
  * Description:		Announce holidays, events, achievements and notable historical figures in a widget.
- * Version:			1.5.5
+ * Version:			1.5.6
  * Requires CP:		1.0
+ * Requires PHP:	7.4
  * Author:			azurecurve
  * Author URI:		https://development.azurecurve.co.uk/classicpress-plugins/
  * Plugin URI:		https://development.azurecurve.co.uk/classicpress-plugins/azrcrv-widget-announcements/
