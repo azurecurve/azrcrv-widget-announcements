@@ -1,3 +1,4 @@
+/* Tab styles */
 .ui-tabs {
 	display: block;
 	position: relative;
@@ -8,23 +9,23 @@
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: left;
-    background: transparent;
-    border: none;
+	background: transparent;
+	border: none;
 	font-size: 1.3em;
 }
-.ui-tabs-nav .ui-state-default a{
+.ui-tabs-nav .ui-state-default a {
 	border: 1px solid grey;
 	border-bottom: 4px solid grey;
 	color: grey;
 	background: transparent;
 }
-.ui-tabs-nav .ui-state-active a{
+.ui-tabs-nav .ui-state-active a {
 	border: 1px solid #007FFF;
 	border-bottom: 4px solid #007FFF;
 	color: #007FFF;
 	background: transparent;
 }
-.ui-tabs-nav .ui-state-default a:hover{
+.ui-tabs-nav .ui-state-default a:hover {
 	border: 1px solid #ff8000;
 	border-bottom: 4px solid #ff8000;
 	color: #ff8000;
@@ -36,6 +37,42 @@
 	border: 1px solid grey;
 	padding: 12px;
 }
-.ui-tabs-hidden{
+.ui-tabs-hidden {
 	display: none;
+}
+
+/* Tweet metabox */
+.azrcrv-wa-metabox-tweet {
+	width: 100%;
+}
+.azrcrv-wa-media-instructions {
+	clear: both;
+	padding-bottom: 6px;
+}
+.azrcrv-wa-media-grid {
+	width: 100%;
+	display: block;
+}
+.azrcrv-wa-media-item {
+	float: left;
+	width: 170px;
+	text-align: center;
+}
+.azrcrv-wa-media-preview {
+	width: 160px;
+}
+
+/* Tweet history metabox */
+.azrcrv-wa-tweet-error {
+	color: red;
+	font-weight: 900;
+}
+.azrcrv-wa-metabox-tweet-history {
+	width: 100%;
+}
+
+/* Repeat metabox selects */
+.azrcrv-wa-repeat-selects {
+	margin-left: 20px;
+	display: inline-block;
 }

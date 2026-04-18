@@ -51,6 +51,33 @@ This plugin is developed for ClassicPress, but will likely work on WordPress.
 
 # Changelog
 
+### [Version 2.0.0](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v2.0.0)
+ * Modernise plugin to follow current azurecurve code patterns.
+ * Introduce `namespace azurecurve\WidgetAnnouncements` across all PHP files.
+ * Add plugin identity constants (`PLUGIN_NAME`, `PLUGIN_SLUG`, `PLUGIN_HYPHEN`, `PLUGIN_UNDERSCORE`, `PLUGIN_FILE`, `DEVELOPER_*`).
+ * Refactor monolithic plugin file into focused `includes/` files: `setup.php`, `functions-settings.php`, `functions-styles.php`, `functions-scripts.php`, `functions-menu.php`, `functions-language.php`, `functions-plugin-images.php`, `functions-custom-post-type.php`, `functions-metaboxes.php`, `functions-cron.php`, `functions-twitter.php`, `functions-widget.php`.
+ * Consolidate all `add_action` and `add_filter` calls into `includes/setup.php`.
+ * Replace `pluginmenu/` directory with standard `includes/azurecurve-menu-populate.php` and `includes/azurecurve-menu-display.php`.
+ * Move `logo.svg` and all assets into `assets/` directory; rename `style.css` to `styles.css`.
+ * Add `assets/css/admin-standard.css` and `assets/css/admin-pluginmenu.css`.
+ * Update text domain from `widget-announcements` / `widget-announcement` to consistent `azrcrv-wa`.
+ * Update `Domain Path` to `/assets/languages`.
+ * Replace `wp_redirect()` with `wp_safe_redirect()` in settings save function.
+ * Fix undefined variable `$post_ID` bug in repeat announcement metabox save (was `$post_id`).
+ * Remove custom `azrcrv_wa_is_plugin_active()` reimplementation; use WordPress core `is_plugin_active()` directly.
+ * Remove `extract()` from widget display method; replace with explicit variable assignments.
+ * Replace timezone-unaware `date()` calls with `current_time()` in cron and widget date matching.
+ * Replace plugin image path filter to use constant-based approach instead of `strpos()` matching.
+ * Move inline `style=""` attributes from metabox render functions into `assets/css/admin.css`.
+ * Remove redundant activation hook cron scheduling; cron lifecycle managed entirely from settings save.
+ * Fix escaping throughout: `esc_attr()` on time input values, `esc_html()` on page title output, `esc_url()` on all URL outputs.
+ * Fix settings page submit button PHP short tag inside string literal.
+ * Standardise all comparisons to strict equality (`===`); use `(int)` casting consistently.
+ * Convert all files from Windows CRLF to Unix LF line endings.
+ * Refactor settings page to use standard azurecurve tab pattern; replace custom CSS tab toggle logic with server-side tab visibility.
+ * Rename `WP_Widget` subclass from `azrcrv_wa_register_widget` to namespaced `Announcements_Widget`.
+ * Increase required version of PHP to 8.2.
+
 ### [Version 1.5.6](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.5.6)
  * Update plugin header for compatibility with ClasssicPress v2.
  
