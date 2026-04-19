@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------------------
  * Plugin Name:		Widget Announcements
  * Description:		Announce holidays, events, achievements and notable historical figures in a widget.
- * Version:			2.0.1
+ * Version:			2.0.2
  * Requires CP:		1.0
  * Requires PHP:	8.2
  * Author:			azurecurve

@@ -16,7 +16,7 @@ ob_start();
 
 	<tr>
 		<th scope="row" colspan="2" class="azrcrv-settings-section-heading">
-			<h2 class="azrcrv-settings-section-heading"><?php esc_html_e( 'Widget Announcements Usage', 'azrcrv-wa' ); ?></h2>
+			<?php esc_html_e( 'Widget Announcements Usage', 'azrcrv-wa' ); ?>
 		</th>
 	</tr>
 

@@ -56,11 +56,11 @@ th.azrcrv-settings-section-heading {
 	margin: 0;
 	padding: 0;
 	padding-left: 6px;
-	line-height: 1em;
+	padding-bottom: 6px;
+	line-height: 1.3em;
 	border-bottom: 5px solid #007fff;
-}
-h2.azrcrv-settings-section-heading {
-	line-height: 1em;
+    font-size: 1.3em;
+    font-weight: 600;
 }
 table.azrcrv.settings th {
 	padding-left: 12px;
