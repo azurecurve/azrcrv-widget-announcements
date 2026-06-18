@@ -37,7 +37,6 @@ add_action( 'admin_init', __NAMESPACE__ . '\\register_admin_styles' );
 add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\\enqueue_admin_styles' );
 add_action( 'admin_init', __NAMESPACE__ . '\\register_admin_scripts' );
 add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\\enqueue_admin_scripts' );
-add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\\enqueue_media_uploader' );
 
 // add filters.
 add_filter( 'plugin_action_links', __NAMESPACE__ . '\\add_plugin_action_link', 10, 2 );

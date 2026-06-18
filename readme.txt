@@ -51,6 +51,13 @@ This plugin is developed for ClassicPress, but will likely work on WordPress.
 
 # Changelog
 
+### [Version 2.0.3](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v2.0.3)
+ * Upgrade UpdateClient.
+ * Update azurecurve plugins list.
+ * Replace jquery with vanilla js.
+ * Correct headings on settings admin pages.
+ * Correct constants to match standard pattern.
+ 
 ### [Version 2.0.2](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v2.0.2)
  * Update settings tabs and css to format th elements correctly.
 

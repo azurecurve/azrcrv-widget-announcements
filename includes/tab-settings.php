@@ -27,7 +27,7 @@ ob_start();
 
 	<tr>
 		<th scope="row" colspan="2" class="azrcrv-settings-section-heading">
-			<?php esc_html_e( 'Widget Defaults', 'azrcrv-wa' ); ?>
+			<h2 class="azrcrv-settings-section-heading"><?php esc_html_e( 'Widget Defaults', 'azrcrv-wa' ); ?></h2>
 		</th>
 	</tr>
 
@@ -51,7 +51,7 @@ ob_start();
 
 	<tr>
 		<th scope="row" colspan="2" class="azrcrv-settings-section-heading">
-			<?php esc_html_e( 'Integration', 'azrcrv-wa' ); ?>
+			<h2 class="azrcrv-settings-section-heading"><?php esc_html_e( 'Integration', 'azrcrv-wa' ); ?></h2>
 		</th>
 	</tr>
 
