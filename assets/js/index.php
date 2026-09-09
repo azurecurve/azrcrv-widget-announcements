@@ -1,2 +1,2 @@
 <?php
-// Whereof one cannot speak, thereof one must be silent.
+// Silence is golden.

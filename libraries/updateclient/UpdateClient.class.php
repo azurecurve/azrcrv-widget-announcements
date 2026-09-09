@@ -19,7 +19,7 @@
  */
 
 // EDIT: Make this unique. Example: YourDevName\YourPluginName;
-namespace azurecurve\WidgetAnnouncements;
+namespace azurecurve\ShortcodesInWidgets;
 
 // EDIT: URL where Update Manager is installed; with trailing slash!
 const UPDATE_SERVER = 'https://update.development.azurecurve.co.uk/';

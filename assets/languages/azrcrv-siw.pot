@@ -1,0 +1,168 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Shortcodes in Widgets 2.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-21 00:00+0000\n"
+"PO-Revision-Date: 2026-07-21 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: translate@azurecurve.co.uk\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: azurecurve PRD-driven rewrite\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e;esc_html__;esc_html_e;esc_attr__;esc_attr_e\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: includes/functions-menu.php:28 includes/functions-menu.php:55 includes/functions-menu.php:56 includes/tabs-output.php:21
+msgid "Settings"
+msgstr ""
+
+#: includes/functions-menu.php:44 includes/functions-menu.php:45 includes/functions-menu.php:65
+msgid "Shortcodes in Widgets"
+msgstr ""
+
+#: includes/functions-menu.php:64
+msgid "Shortcodes in Widgets Settings"
+msgstr ""
+
+#: includes/functions-menu.php:78
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: includes/functions-menu.php:103
+msgid "Settings saved."
+msgstr ""
+
+#: includes/functions-menu.php:104
+msgid "Security check failed - please try again."
+msgstr ""
+
+#: includes/functions-settings.php:83
+msgid "You do not have permissions to perform this action."
+msgstr ""
+
+#: includes/tab-instructions.php:19 includes/tabs-output.php:22
+msgid "Instructions"
+msgstr ""
+
+#: includes/tab-instructions.php:21
+msgid ""
+"This plugin lets shortcodes (such as [gallery] or those added by other plugins) be used inside widget content, rather than only inside post and page content."
+msgstr ""
+
+#: includes/tab-instructions.php:24
+msgid ""
+"Open the Settings tab and enable shortcode support for whichever widget areas you use - Text widget, Custom HTML widget, and/or widget titles."
+msgstr ""
+
+#: includes/tab-instructions.php:25
+msgid ""
+"Add your shortcode directly into the widget content (or title) as you normally would in a post."
+msgstr ""
+
+#: includes/tab-instructions.php:26
+msgid ""
+"Save the widget and view the front end of your site to confirm the shortcode has expanded correctly."
+msgstr ""
+
+#: includes/tab-instructions.php:29
+msgid "About the Text Widget options"
+msgstr ""
+
+#: includes/tab-instructions.php:31
+msgid ""
+"ClassicPress/WordPress already expands shortcodes automatically in the built-in Text widget when it is used in its default \"visual\" mode - the \"Text Widget (visual/block mode)\" option on the Settings tab mainly helps third-party widgets that render their own content through the same filter, and is safe to enable alongside the legacy option without shortcodes being expanded twice."
+msgstr ""
+
+#: includes/tab-instructions.php:34
+msgid ""
+"The \"Text Widget (legacy/classic mode)\" option covers the older, non-visual Text widget, and any third-party widget that has not been updated to use the newer widget content filter."
+msgstr ""
+
+#: includes/tab-instructions.php:37
+msgid "About the Custom HTML Widget option"
+msgstr ""
+
+#: includes/tab-instructions.php:39
+msgid ""
+"Unlike the Text widget, ClassicPress/WordPress does not expand shortcodes in the Custom HTML widget by default, so this option adds genuinely new functionality. Because shortcode processing runs across the entire widget content, avoid using square brackets in any inline JavaScript within a Custom HTML widget where this option is enabled."
+msgstr ""
+
+#: includes/tab-other-plugins.php:41
+msgid "Other Plugins"
+msgstr ""
+
+#: includes/tab-other-plugins.php:50
+msgid ""
+"%1$s was one of the first plugin developers to start developing for ClassicPress; all plugins are available from %2$s and are integrated with the %3$s plugin for fully integrated, no hassle, updates."
+msgstr ""
+
+#: includes/tab-other-plugins.php:53
+msgid "Other plugins available from %s, which you are not using, are:"
+msgstr ""
+
+#: includes/tab-settings.php:24
+msgid ""
+"Choose which widget areas should have shortcodes expanded. Changes apply immediately after saving."
+msgstr ""
+
+#: includes/tab-settings.php:34
+msgid "Text Widget (legacy/classic mode)"
+msgstr ""
+
+#: includes/tab-settings.php:38
+msgid ""
+"Expand shortcodes in the classic Text widget, and in any third-party widget that applies the \"widget_text\" filter."
+msgstr ""
+
+#: includes/tab-settings.php:43
+msgid "Text Widget (visual/block mode)"
+msgstr ""
+
+#: includes/tab-settings.php:47
+msgid "Expand shortcodes in the visual-mode/block-based Text widget."
+msgstr ""
+
+#: includes/tab-settings.php:49
+msgid ""
+"ClassicPress/WordPress already does this for the built-in visual Text widget by default, and safely avoids double-processing if both this and the option above are enabled - this option mainly helps third-party widgets. See the Instructions tab for details."
+msgstr ""
+
+#: includes/tab-settings.php:53
+msgid "Custom HTML Widget"
+msgstr ""
+
+#: includes/tab-settings.php:57
+msgid "Expand shortcodes in the Custom HTML widget."
+msgstr ""
+
+#: includes/tab-settings.php:59
+msgid ""
+"Only enable this if you understand your Custom HTML widgets - shortcode processing runs across the whole widget content, including any inline <script> blocks, so a stray \"[\" in JavaScript could be misinterpreted as a shortcode."
+msgstr ""
+
+#: includes/tab-settings.php:63
+msgid "Widget Titles"
+msgstr ""
+
+#: includes/tab-settings.php:67
+msgid "Expand shortcodes in widget titles."
+msgstr ""
+
+#: includes/tab-settings.php:74
+msgid "Save Settings"
+msgstr ""
+
+#: includes/tabs-output.php:76
+msgid "Support"
+msgstr ""
+
+#: includes/tabs-output.php:85
+msgid ""
+"You can help support the development of our free plugins by donating a small amount of money."
+msgstr ""
+

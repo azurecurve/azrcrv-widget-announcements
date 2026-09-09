@@ -2,6 +2,13 @@
 /*
 	tab output on azurecurve page
 */
+
+/**
+ * Prevent direct access.
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	die();
+}
 ?>
 
 <div id="tabs" class="azrcrv-ui-tabs">
@@ -47,7 +54,7 @@
 ?>
 <div class='azrcrv-donate'>
 	<?php
-		esc_html_e( 'Support', 'azrcrv-wa' );
+		esc_html_e( 'Support', 'azrcrv-ftp' );
 	?>
 	azurecurve | Development
 	<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
@@ -58,7 +65,7 @@
 	</form>
 	<span>
 		<?php
-		esc_html_e( 'You can help support the development of our free plugins by donating a small amount of money.', 'azrcrv-wa' );
+		esc_html_e( 'You can help support the development of our free plugins by donating a small amount of money.', 'azrcrv-ftp' );
 		?>
 	</span>
 </div>

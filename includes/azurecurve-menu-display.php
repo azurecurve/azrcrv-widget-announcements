@@ -2,6 +2,14 @@
 /**
  *  Menu Version 3.0
  */
+
+/**
+ * Prevent direct access.
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	die();
+}
+
 // add actions.
 add_action( 'admin_menu', 'azrcrv_add_azurecurve_menu' );
 
@@ -35,6 +43,8 @@ if ( ! function_exists( 'azrcrv_add_azurecurve_menu' ) ) {
 
 /**
  * Display plugin menu.
+ *
+ * @since 1.0.0
  */
 if ( ! function_exists( 'azrcrv_display_azurecurve_menu' ) ) {
 	function azrcrv_display_azurecurve_menu() {
@@ -48,29 +58,30 @@ if ( ! function_exists( 'azrcrv_display_azurecurve_menu' ) ) {
 
 			$plugin_array = get_option( 'azrcrv-plugin-menu' );
 
-			$tab_active_label = esc_html__( 'Active Plugins', 'azrcrv-wa' );
+			$tab_active_label = esc_html__( 'Active Plugins', 'azrcrv-ftp' );
 			$active_plugins   = '';
 
-		foreach ( $plugin_array as $plugin_name => $plugin_details ) {
+			foreach ( $plugin_array as $plugin_name => $plugin_details ) {
 
-			$alternative_color = '';
+				$alternative_color = '';
 
-			if ( isset( $plugin_details['premium'] ) and $plugin_details['premium'] == 1 ) {
-				$alternative_color = 'premium-';
+				if ( isset( $plugin_details['premium'] ) and $plugin_details['premium'] == 1 ) {
+					$alternative_color = 'premium-';
+				}
+
+				if ( isset( $plugin_details['bright'] ) and $plugin_details['bright'] == 1 ) {
+					$alternative_color = 'bright-';
+				}
+
+				if ( isset( $plugin_details['retired'] ) and $plugin_details['retired'] == 1 ) {
+					$alternative_color = 'grey-';
+				}
+
+				if ( is_plugin_active( $plugin_details['plugin_link'] ) ) {
+					$active_plugins .= '<a href="' . esc_url_raw( $plugin_details['admin_URL'] ) . '" class="azrcrv-' . esc_html( $alternative_color ) . 'plugin-index">' . esc_html( $plugin_name ) . '</a>';
+				}
+
 			}
-
-			if ( isset( $plugin_details['bright'] ) and $plugin_details['bright'] == 1 ) {
-				$alternative_color = 'bright-';
-			}
-
-			if ( isset( $plugin_details['retired'] ) and $plugin_details['retired'] == 1 ) {
-				$alternative_color = 'grey-';
-			}
-
-			if ( is_plugin_active( $plugin_details['plugin_link'] ) ) {
-				$active_plugins .= '<a href="' . esc_url_raw( $plugin_details['admin_URL'] ) . '" class="azrcrv-' . esc_html( $alternative_color ) . 'plugin-index">' . esc_html( $plugin_name ) . '</a>';
-			}
-		}
 
 			$tab_active = '
 				<table class="form-table azrcrv-settings">
@@ -80,14 +91,13 @@ if ( ! function_exists( 'azrcrv_display_azurecurve_menu' ) ) {
 						<td scope="row" colspan=2>
 						
 							<p>' .
-								sprintf( esc_html__( '%1$s was one of the first plugin developers to start developing for ClassicPress; all plugins are available from %2$s and are integrated with the %3$s plugin for fully integrated, no hassle, updates.', 'azrcrv-wa' ), '<strong>azurecurve | Development</strong>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve | Development</a>', '<a href="https://directory.classicpress.net/plugins/update-manager/">Update Manager</a>' )
+								sprintf( esc_html__( '%1$s was one of the first plugin developers to start developing for ClassicPress; all plugins are available from %2$s and are integrated with the %3$s plugin for fully integrated, no hassle, updates.', 'azrcrv-ftp' ), '<strong>azurecurve | Development</strong>', '<a href="https://development.azurecurve.co.uk/classicpress-plugins/">azurecurve | Development</a>', '<a href="https://directory.classicpress.net/plugins/update-manager/">Update Manager</a>' )
 							. '</p>
 							<p>' .
-								sprintf( esc_html__( 'The %s plugins active on your site are:', 'azrcrv-wa' ), '<strong>azurecurve | Development</strong>' )
+								sprintf( esc_html__( 'The %s plugins active on your site are:', 'azrcrv-ftp' ), '<strong>azurecurve | Development</strong>' )
 							. '</p>
 						
 						</td>
-					
 					</tr>
 					
 					<tr>
@@ -102,34 +112,34 @@ if ( ! function_exists( 'azrcrv_display_azurecurve_menu' ) ) {
 					
 				</table>';
 
-			$tab_other_label = esc_html__( 'Other Available Plugins', 'azrcrv-wa' );
+			$tab_other_label = esc_html__( 'Other Available Plugins', 'azrcrv-ftp' );
 			$other_plugins   = '';
 
 			$countofplugins = 0;
 
-		foreach ( $plugin_array as $plugin_name => $plugin_details ) {
+			foreach ( $plugin_array as $plugin_name => $plugin_details ) {
 
-			if ( $plugin_details['retired'] == 0 ) {
+				if ( $plugin_details['retired'] == 0 ) {
 
-				$alternative_color = '';
-				if ( isset( $plugin_details['bright'] ) and $plugin_details['bright'] == 1 ) {
-					$alternative_color = 'bright-';
-				}
+					$alternative_color = '';
+					if ( isset( $plugin_details['bright'] ) and $plugin_details['bright'] == 1 ) {
+						$alternative_color = 'bright-';
+					}
 
-				if ( isset( $plugin_details['premium'] ) and $plugin_details['premium'] == 1 ) {
-					$alternative_color = 'premium-';
-				}
+					if ( isset( $plugin_details['premium'] ) and $plugin_details['premium'] == 1 ) {
+						$alternative_color = 'premium-';
+					}
 
-				if ( ! is_plugin_active( $plugin_details['plugin_link'] ) ) {
-					$other_plugins  .= '<a href="' . esc_url_raw( $plugin_details['dev_URL'] ) . '" class="azrcrv-' . esc_html( $alternative_color ) . 'plugin-index">' . esc_html( $plugin_name ) . '</a>';
-					$countofplugins += 1;
+					if ( ! is_plugin_active( $plugin_details['plugin_link'] ) ) {
+						$other_plugins  .= '<a href="' . esc_url_raw( $plugin_details['dev_URL'] ) . '" class="azrcrv-' . esc_html( $alternative_color ) . 'plugin-index">' . esc_html( $plugin_name ) . '</a>';
+						$countofplugins += 1;
+					}
 				}
 			}
-		}
 
-		if ( $countofplugins == 0 ) {
-			$other_plugins .= sprintf( esc_html__( 'Congratulations! You\'re using all of the %s plugins.', 'azrcrv-wa' ), 'azurecurve | Development' );
-		}
+			if ( $countofplugins == 0 ) {
+				$other_plugins .= sprintf( esc_html__( 'Congratulations! You\'re using all of the %s plugins.', 'azrcrv-ftp' ), 'azurecurve | Development' );
+			}
 
 			$tab_other = '
 				<table class="form-table azrcrv-settings">
@@ -140,11 +150,10 @@ if ( ! function_exists( 'azrcrv_display_azurecurve_menu' ) ) {
 						
 							
 							<p>' .
-								sprintf( esc_html__( 'The other plugins available from %s are:', 'azrcrv-wa' ), '<strong>azurecurve | Development</strong>' )
+								sprintf( esc_html__( 'The other plugins available from %s are:', 'azrcrv-ftp' ), '<strong>azurecurve | Development</strong>' )
 							. '</p>
 						
 						</td>
-					
 					</tr>
 					
 					<tr>

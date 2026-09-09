@@ -1,19 +1,23 @@
 <?php
-/**
- * Language functions.
- */
+/*
+	language functions
+*/
 
 /**
  * Declare the Namespace.
  */
-namespace azurecurve\WidgetAnnouncements;
+namespace azurecurve\ShortcodesInWidgets;
 
 /**
- * Load language files.
- *
- * @since 1.0.0
+ * Prevent direct access.
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	die();
+}
+
+/**
+ * Load plugin translations.
  */
 function load_languages() {
-	$plugin_rel_path = basename( dirname( PLUGIN_FILE ) ) . '../assets/languages';
-	load_plugin_textdomain( 'azrcrv-wa', false, $plugin_rel_path );
+	load_plugin_textdomain( 'azrcrv-siw', false, dirname( plugin_basename( PLUGIN_FILE ) ) . '/assets/languages/' );
 }
