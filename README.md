@@ -1,19 +1,38 @@
-# [Shortcodes in Widgets](https://development.azurecurve.co.uk/classicpress-plugins/shortcodes-in-widgets/)
+# [Widget Announcements](https://development.azurecurve.co.uk/classicpress-plugins/widget-announcements/)
 ![Plugin Banner](/assets/images/banner-1544x500.png)
 
-Allows shortcodes to be used in widgets.
+Announce holidays, events, achievements, etc. in a widget.
 
-## Description
+# Description
 
-Allows shortcodes to be used in widgets.
+Announce holidays, events, achievements and notable historical figures in a widget.
 
-This plugin is multisite compatible.
+Announcements can be made:
+* One off
+* Monthly
+* Annually
+* Good Friday
+* Easter Sunday
+* Easter Monday
+* Monthly on the nth day (e.g. 2nd Wednesday)
+* Annually on the nth day of the month (e.g. 4th Thursday November)
+ 
+Announcements are created as a custom post type and can have details, an image and additional text after the image.
 
 ## Installation
 
-* Download the latest release of the plugin from [GitHub](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/latest/).
+* Download the latest release of the plugin from [GitHub](https://github.com/azurecurve/azrcrv-widget-announcements/releases/latest/).
 * Upload the entire zip file using the Plugins upload function in your ClassicPress admin panel.
 * Activate the plugin.
+* Configure relevant settings via the settings page in the admin control panel (azurecurve menu).
+ 
+ == Screenshots ==
+
+# Screenshots
+
+1. Create new announcement in the custom post type.
+2. Add widget to widget area and select category.
+3. Widget displayed on front end when announcement meets date criteria.
 
 ## Frequently Asked Questions
 
@@ -25,87 +44,134 @@ This plugin is developed for ClassicPress, but will likely work on WordPress.
 
 ## Changelog
 
-### [Version 2.0.0](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/tag/v2.0.0)
+### [Version 2.0.4](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v2.0.4)
 
-* Rebuilt to match the current azurecurve plugin architecture (namespaced code, tabbed admin UI matching Feed to Post).
-* Added a Settings tab to control which widget areas get shortcode support (Text widget legacy and visual modes, Custom HTML widget, widget titles). Existing sites keep the exact same behaviour as 1.2.6 after upgrading - only the legacy Text widget option is on by default.
-* Fixed incorrect/missing text domain in several admin-page strings.
-* Fixed an inefficient plugin_action_links hook so it no longer runs for every plugin on the Plugins list page.
-* Removed the hard-coded "Shortcodes in Comments" link - it's now covered automatically by the standard Other Plugins tab.
-* Added uninstall.php to clean up the plugin's own settings on uninstall.
-* BREAKING: minimum PHP requirement raised to 8.2.
-* BREAKING: text domain renamed from `shortcodes-in-widgets` to `azrcrv-siw`; existing translation (.po/.mo) files must be re-supplied under the new domain.
-* Update readme.md and remove readme.txt (not required for ClassicPress).
+* Update to correct versioning problem.
 * Update azurecurve menu.
 
-### [Version 1.2.6](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/tag/v1.2.6)
+### [Version 2.0.3](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v2.0.3)
+
+* Upgrade UpdateClient.
+* Update azurecurve plugins list.
+* Replace jquery with vanilla js.
+* Correct headings on settings admin pages.
+* Correct constants to match standard pattern.
+* Remove To Twitter (azrcrv-tt) integration, including autopost/tweet/retweet metaboxes, settings tab, cron scheduling and related functions.
+
+### [Version 2.0.2](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v2.0.2)
+
+* Update settings tabs and css to format th elements correctly.
+
+### [Version 2.0.1](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v2.0.1)
+
+* Update description and list of plugins.
+
+### [Version 2.0.0](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v2.0.0)
+
+* Modernise plugin to follow current azurecurve code patterns.
+* Introduce `namespace azurecurve\WidgetAnnouncements` across all PHP files.
+* Add plugin identity constants (`PLUGIN_NAME`, `PLUGIN_SLUG`, `PLUGIN_HYPHEN`, `PLUGIN_UNDERSCORE`, `PLUGIN_FILE`, `DEVELOPER_*`).
+* Refactor monolithic plugin file into focused `includes/` files: `setup.php`, `functions-settings.php`, `functions-styles.php`, `functions-scripts.php`, `functions-menu.php`, `functions-language.php`, `functions-plugin-images.php`, `functions-custom-post-type.php`, `functions-metaboxes.php`, `functions-cron.php`, `functions-twitter.php`, `functions-widget.php`.
+* Consolidate all `add_action` and `add_filter` calls into `includes/setup.php`.
+* Replace `pluginmenu/` directory with standard `includes/azurecurve-menu-populate.php` and `includes/azurecurve-menu-display.php`.
+* Move `logo.svg` and all assets into `assets/` directory; rename `style.css` to `styles.css`.
+* Add `assets/css/admin-standard.css` and `assets/css/admin-pluginmenu.css`.
+* Update text domain from `widget-announcements` / `widget-announcement` to consistent `azrcrv-wa`.
+* Update `Domain Path` to `/assets/languages`.
+* Replace `wp_redirect()` with `wp_safe_redirect()` in settings save function.
+* Fix undefined variable `$post_ID` bug in repeat announcement metabox save (was `$post_id`).
+* Remove custom `azrcrv_wa_is_plugin_active()` reimplementation; use WordPress core `is_plugin_active()` directly.
+* Remove `extract()` from widget display method; replace with explicit variable assignments.
+* Replace timezone-unaware `date()` calls with `current_time()` in cron and widget date matching.
+* Replace plugin image path filter to use constant-based approach instead of `strpos()` matching.
+* Move inline `style=""` attributes from metabox render functions into `assets/css/admin.css`.
+* Remove redundant activation hook cron scheduling; cron lifecycle managed entirely from settings save.
+* Fix escaping throughout: `esc_attr()` on time input values, `esc_html()` on page title output, `esc_url()` on all URL outputs.
+* Fix settings page submit button PHP short tag inside string literal.
+* Standardise all comparisons to strict equality (`===`); use `(int)` casting consistently.
+* Convert all files from Windows CRLF to Unix LF line endings.
+* Refactor settings page to use standard azurecurve tab pattern; replace custom CSS tab toggle logic with server-side tab visibility.
+* Rename `WP_Widget` subclass from `azrcrv_wa_register_widget` to namespaced `Announcements_Widget`.
+* Increase required version of PHP to 8.2.
+
+### [Version 1.5.6](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.5.6)
 
 * Update plugin header for compatibility with ClasssicPress v2.
 
-### [Version 1.2.5](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/tag/v1.2.5)
+### [Version 1.5.5](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.5.5)
 
 * Update plugin header and readme for compatibility with ClassicPress Directory v2.
 * Update Update Manager to version 2.5.0.
 
-### [Version 1.2.4](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/tag/v1.2.4)
+### [Version 1.5.4](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.5.4)
 
 * Update readme file for compatibility with ClassicPress Directory.
 
-### [Version 1.2.3](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/tag/v1.2.3)
+### [Version 1.5.3](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.5.3)
 
 * Update readme files.
 * Update language template.
 * Fix bug with azurecurve menu.
 
-### [Version 1.2.2](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/tag/v1.2.2)
+### [Version 1.5.2](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.5.2)
 
 * Update azurecurve menu.
 * Update readme files.
 
-### [Version 1.2.1](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/tag/v1.2.1)
+### [Version 1.5.1](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.5.1)
 
+* Remove dev code.
+
+### [Version 1.5.0](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.5.0)
+
+* Update translations to escape strings.
 * Update azurecurve menu and logo.
 
-### [Version 1.2.0](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/tag/v1.2.0)
+### [Version 1.4.0](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.4.0)
 
-* Fix plugin action link to use admin_url() function.
-* Add plugin icon and banner.
-* Update azurecurve plugin menu.
+* Refactor settings page to be accessible using jQuery UI Tabs.
 
-### [Version 1.1.4](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/tag/v1.1.4)
+### [Version 1.3.0](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.3.0)
 
-* Fix bug with plugin menu.
-* Update plugin menu css.
+* Add integration with [Toggle Show/Hide](https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/) from [azurecurve](https://development.azurecurve.co.uk/classicpress-plugins/) for read more toggle in announcements.
+* Add uninstall function.
+* Refactor settings page.
+* Compress banners, icons and screenshots.
+* Fix To Twitter integration check.
 
-### [Version 1.1.3](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/tag/v1.1.3)
+### [Version 1.2.3](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.2.3)
 
-* Upgrade azurecurve plugin to store available plugins in options.
+* Remove extraneous code.
 
-### [Version 1.1.2](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/tag/v1.1.2)
+### [Version 1.2.2](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.2.2)
 
-* Update Update Manager class to v2.0.0.
-* Update action link.
-* Update azurecurve menu icon with compressed image.
+* Fix incorrect default options.
 
-### [Version 1.1.1](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/tag/v1.1.1)
+### [Version 1.2.1](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.2.1)
 
-* Fix bug with incorrect language load text domain.
+* Fix bug with To Twitter checked.
 
-### [Version 1.1.0](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/tag/v1.1.0)
+### [Version 1.2.0](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.2.0)
 
-* Add integration with Update Manager for automatic updates.
-* Fix issue with display of azurecurve menu.
-* Change settings page heading.
-* Add load_plugin_textdomain to handle translations.
+* Add integration with [To Twitter](https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/) from [azurecurve](https://development.azurecurve.co.uk/classicpress-plugins/) for automatic tweeting and retweeting of announcements.
+* Fix bug with population of default options.
 
-### [Version 1.0.1](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/tag/v1.0.1)
+### [Version 1.1.1](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.1.1)
 
-* Update azurecurve menu for easier maintenance.
-* Move require of azurecurve menu below security check.
+* Fix incorrect Download link.
 
-### [Version 1.0.0](https://github.com/azurecurve/azrcrv-shortcodes-in-widgets/releases/tag/v1.0.0)
+### [Version 1.1.0](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.1.0)
 
-* Initial release for ClassicPress forked from azurecurve Shortcodes in Widgets WordPress Plugin.
+* Update handling of announcement image in widget.
+* Add default size for announcement image in widget.
+
+### [Version 1.0.1](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.0.1)
+
+* Fix bug with excerpt label changing for all post types, not just the custom post type.
+
+### [Version 1.0.0](https://github.com/azurecurve/azrcrv-widget-announcements/releases/tag/v1.0.0)
+
+* Initial release.
 
 ## Other Notes
 

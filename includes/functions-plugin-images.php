@@ -1,12 +1,12 @@
 <?php
-/*
-	plugin images functions
-*/
+/**
+ * Plugin image functions.
+ */
 
 /**
  * Declare the Namespace.
  */
-namespace azurecurve\ShortcodesInWidgets;
+namespace azurecurve\WidgetAnnouncements;
 
 /**
  * Prevent direct access.
@@ -19,18 +19,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Custom plugin image path.
  */
 function custom_image_path( $path ) {
-	if ( strpos( $path, PLUGIN_SLUG ) !== false ) {
-		$path = plugin_dir_path( PLUGIN_FILE ) . 'assets/images';
-	}
-	return $path;
+    if (strpos($path, PLUGIN_SLUG) !== false){
+        $path = plugin_dir_path( PLUGIN_FILE ).'assets/images';
+    }
+    return $path;
 }
 
 /**
  * Custom plugin image url.
  */
 function custom_image_url( $url ) {
-	if ( strpos( $url, PLUGIN_SLUG ) !== false ) {
-		$url = plugin_dir_url( PLUGIN_FILE ) . 'assets/images';
-	}
-	return $url;
+    if (strpos($url, PLUGIN_SLUG) !== false){
+        $url = plugin_dir_url( PLUGIN_FILE ).'assets/images';
+    }
+    return $url;
 }

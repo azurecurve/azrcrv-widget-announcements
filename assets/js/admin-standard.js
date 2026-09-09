@@ -1,79 +1,66 @@
-/**
- * Admin standard tab handler — vanilla JS (no jQuery dependency).
- *
- * Replicates the tab switching behaviour previously provided by jQuery UI Tabs.
+/*
+ * Tabs
  */
-document.addEventListener( 'DOMContentLoaded', function () {
+( function () {
 	'use strict';
 
-	var tabNav = document.querySelector( '.azrcrv-ui-tabs-nav' );
+	document.addEventListener( 'DOMContentLoaded', function () {
 
-	if ( ! tabNav ) {
-		return;
-	}
+		var tabLinks = document.querySelectorAll( '#tabs ul li a' );
 
-	var tabItems   = tabNav.querySelectorAll( 'li' );
-	var tabAnchors = tabNav.querySelectorAll( 'a.azrcrv-ui-tabs-anchor' );
+		tabLinks.forEach( function ( link ) {
 
-	/**
-	 * Activate a tab by its anchor element.
-	 *
-	 * @param {HTMLElement} anchor The anchor element of the tab to activate.
-	 */
-	function activateTab( anchor ) {
-		var targetId = anchor.getAttribute( 'href' ).replace( '#', '' );
+			// Tab switching on click or Enter key.
+			link.addEventListener( 'keyup', handleTabActivation );
+			link.addEventListener( 'click', handleTabActivation );
 
-		// Update all tab list items.
-		tabItems.forEach( function ( li ) {
-			var liAnchor = li.querySelector( 'a.azrcrv-ui-tabs-anchor' );
-			if ( liAnchor === anchor ) {
-				li.classList.add( 'azrcrv-ui-state-active' );
-				li.setAttribute( 'aria-selected', 'true' );
-				li.setAttribute( 'aria-expanded', 'true' );
-			} else {
+			// Hover state.
+			link.addEventListener( 'mouseenter', function () {
+				this.classList.add( 'azrcrv-ui-state-hover' );
+			} );
+			link.addEventListener( 'mouseleave', function () {
+				this.classList.remove( 'azrcrv-ui-state-hover' );
+			} );
+		} );
+
+		function handleTabActivation( e ) {
+			if ( e.type === 'keyup' && e.key !== 'Enter' ) {
+				return;
+			}
+
+			e.preventDefault();
+
+			var targetId = this.getAttribute( 'href' );
+			var targetPanel = document.querySelector( targetId );
+
+			if ( ! targetPanel ) {
+				return;
+			}
+
+			// Deactivate all tab list items.
+			document.querySelectorAll( '#tabs ul li' ).forEach( function ( li ) {
 				li.classList.remove( 'azrcrv-ui-state-active' );
 				li.setAttribute( 'aria-selected', 'false' );
 				li.setAttribute( 'aria-expanded', 'false' );
-			}
-		} );
+			} );
 
-		// Show/hide tab panels.
-		var allPanels = document.querySelectorAll( '.azrcrv-ui-tabs-scroll' );
-		allPanels.forEach( function ( panel ) {
-			if ( panel.id === targetId ) {
-				panel.classList.remove( 'azrcrv-ui-tabs-hidden' );
-				panel.setAttribute( 'aria-hidden', 'false' );
-			} else {
+			// Activate the clicked tab list item.
+			var parentLi = this.closest( 'li' );
+			parentLi.classList.add( 'azrcrv-ui-state-active' );
+			parentLi.setAttribute( 'aria-selected', 'true' );
+			parentLi.setAttribute( 'aria-expanded', 'true' );
+
+			// Hide all sibling panels.
+			var allPanels = this.closest( 'ul' ).parentElement.querySelectorAll( ':scope > div' );
+			allPanels.forEach( function ( panel ) {
 				panel.classList.add( 'azrcrv-ui-tabs-hidden' );
 				panel.setAttribute( 'aria-hidden', 'true' );
-			}
-		} );
-	}
+			} );
 
-	// Click handler.
-	tabAnchors.forEach( function ( anchor ) {
-		anchor.addEventListener( 'click', function ( e ) {
-			e.preventDefault();
-			activateTab( anchor );
-		} );
+			// Show the target panel.
+			targetPanel.classList.remove( 'azrcrv-ui-tabs-hidden' );
+			targetPanel.setAttribute( 'aria-hidden', 'false' );
+		}
 
-		// Keyboard: Enter key.
-		anchor.addEventListener( 'keyup', function ( e ) {
-			if ( e.key === 'Enter' || e.keyCode === 13 ) {
-				e.preventDefault();
-				activateTab( anchor );
-			}
-		} );
 	} );
-
-	// Hover class toggling for tab list items.
-	tabItems.forEach( function ( li ) {
-		li.addEventListener( 'mouseenter', function () {
-			li.classList.add( 'azrcrv-ui-state-hover' );
-		} );
-		li.addEventListener( 'mouseleave', function () {
-			li.classList.remove( 'azrcrv-ui-state-hover' );
-		} );
-	} );
-
-} );
+}() );

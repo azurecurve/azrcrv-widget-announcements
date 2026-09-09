@@ -2,8 +2,8 @@
 /**
  * ------------------------------------------------------------------------------
  * Plugin Name:		Widget Announcements
- * Description:		Announce holidays, events, achievements and notable historical figures in a widget.
- * Version:			2.0.3
+ * Description:		Announce holidays, events, achievements, etc. in a widget.
+ * Version:			2.0.4
  * Requires CP:		1.0
  * Requires PHP:	8.2
  * Author:			azurecurve
@@ -104,16 +104,6 @@ require_once dirname( PLUGIN_FILE ) . '/includes/functions-custom-post-type.php'
  * Load metabox functions.
  */
 require_once dirname( PLUGIN_FILE ) . '/includes/functions-metaboxes.php';
-
-/**
- * Load cron functions.
- */
-require_once dirname( PLUGIN_FILE ) . '/includes/functions-cron.php';
-
-/**
- * Load Twitter integration functions.
- */
-require_once dirname( PLUGIN_FILE ) . '/includes/functions-twitter.php';
 
 /**
  * Load widget.

@@ -1,31 +1,24 @@
 <?php
-/*
-	menu functions - admin menu registration and page rendering. The
-	admin-post save handler for the Settings tab lives in
-	functions-settings.php, alongside the functions it calls.
-*/
+/**
+ * Menu functions.
+ */
 
 /**
  * Declare the Namespace.
  */
-namespace azurecurve\ShortcodesInWidgets;
+namespace azurecurve\WidgetAnnouncements;
 
 /**
- * Prevent direct access.
- */
-if ( ! defined( 'ABSPATH' ) ) {
-	die();
-}
-
-/**
- * Add settings link on the Plugins list page.
+ * Add action link on plugins page.
+ *
+ * @since 1.0.0
  */
 function add_plugin_action_link( $links, $file ) {
 
 	$this_plugin = PLUGIN_SLUG . '/' . PLUGIN_SLUG . '.php';
 
 	if ( $file === $this_plugin ) {
-		$settings_link = '<a href="' . esc_url( admin_url( 'admin.php?page=' . PLUGIN_HYPHEN ) ) . '"><img src="' . esc_url( plugins_url( '../assets/images/logo.svg', __FILE__ ) ) . '" style="padding-top: 2px; margin-right: -5px; height: 16px; width: 16px;" alt="azurecurve" />' . esc_html__( 'Settings', 'azrcrv-siw' ) . '</a>';
+		$settings_link = '<a href="' . esc_url( admin_url( 'admin.php?page=' . PLUGIN_HYPHEN ) ) . '"><img src="' . esc_url( plugins_url( '../assets/images/logo.svg', __FILE__ ) ) . '" style="padding-top: 2px; margin-right: -5px; height: 16px; width: 16px;" alt="azurecurve" />' . esc_html__( 'Settings', 'azrcrv-wa' ) . '</a>';
 		array_unshift( $links, $settings_link );
 	}
 
@@ -33,19 +26,29 @@ function add_plugin_action_link( $links, $file ) {
 }
 
 /**
- * Add the top-level admin menu page, and a matching entry under the shared
- * azurecurve cross-plugin menu (registered in azurecurve-menu-display.php)
- * so this plugin is reachable both on its own and alongside the rest of the
- * azurecurve plugin family.
+ * Add to menu.
+ *
+ * @since 1.0.0
  */
 function create_admin_menu() {
 
+	// Add settings to announcements CPT submenu.
 	add_submenu_page(
-		'azrcrv-plugin-menu',
-		esc_html__( 'Shortcodes in Widgets Settings', 'azrcrv-siw' ),
-		esc_html__( 'Shortcodes in Widgets', 'azrcrv-siw' ),
+		'edit.php?post_type=widget-announcement',
+		PLUGIN_NAME . ' ' . esc_html__( 'Settings', 'azrcrv-wa' ),
+		esc_html__( 'Settings', 'azrcrv-wa' ),
 		'manage_options',
 		PLUGIN_HYPHEN,
-		__NAMESPACE__ . '\\display_admin_page'
+		__NAMESPACE__ . '\\display_options'
+	);
+
+	// Add settings to azurecurve menu.
+	add_submenu_page(
+		'azrcrv-plugin-menu',
+		PLUGIN_NAME . ' ' . esc_html__( 'Settings', 'azrcrv-wa' ),
+		PLUGIN_NAME,
+		'manage_options',
+		PLUGIN_HYPHEN,
+		__NAMESPACE__ . '\\display_options'
 	);
 }

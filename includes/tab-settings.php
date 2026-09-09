@@ -1,75 +1,89 @@
 <?php
-/*
-	settings tab - lets the admin choose which widget areas get shortcode
-	support (PRD s6). Only 'enable_widget_text' is on by default, so
-	upgrading from a pre-2.0.0 install changes no visible behaviour until
-	these are changed here.
-*/
+/**
+ * Settings tab content.
+ */
 
 /**
  * Declare the Namespace.
  */
-namespace azurecurve\ShortcodesInWidgets;
+namespace azurecurve\WidgetAnnouncements;
 
-/**
- * Prevent direct access.
- */
-if ( ! defined( 'ABSPATH' ) ) {
-	die();
-}
+$toggle_showhide_enabled = is_plugin_active( 'azrcrv-toggle-showhide/azrcrv-toggle-showhide.php' );
 
-$settings = get_settings();
+$tab_settings_label = PLUGIN_NAME . ' ' . esc_html__( 'Settings', 'azrcrv-wa' );
+
+ob_start();
 ?>
+<table class="form-table azrcrv-settings">
 
-<p><?php esc_html_e( 'Choose which widget areas should have shortcodes expanded. Changes apply immediately after saving.', 'azrcrv-siw' ); ?></p>
+	<tr>
+		<th scope="row" colspan="2">
+			<label for="explanation">
+				<?php echo esc_html( PLUGIN_NAME . ' ' . __( 'allows you to add a widget which can be used to announce holidays, events, achievements and notable historical figures in a widget.', 'azrcrv-wa' ) ); ?>
+			</label>
+		</th>
+	</tr>
 
-<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+	<tr>
+		<th scope="row" colspan="2" class="azrcrv-settings-section-heading">
+			<h2 class="azrcrv-settings-section-heading"><?php esc_html_e( 'Widget Defaults', 'azrcrv-wa' ); ?></h2>
+		</th>
+	</tr>
 
-	<input type="hidden" name="action" value="<?php echo esc_attr( PLUGIN_UNDERSCORE ); ?>_save_settings" />
-	<?php wp_nonce_field( PLUGIN_HYPHEN . '-save-settings', PLUGIN_HYPHEN . '-nonce' ); ?>
+	<tr>
+		<th scope="row">
+			<label for="widget-width"><?php esc_html_e( 'Width', 'azrcrv-wa' ); ?></label>
+		</th>
+		<td>
+			<input name="widget-width" type="number" min="1" id="widget-width" value="<?php echo esc_attr( $options['widget']['width'] ); ?>" class="small-text" /> px
+		</td>
+	</tr>
 
-	<table class="form-table azrcrv-siw-settings" role="presentation">
-		<tbody>
-			<tr>
-				<th scope="row"><?php esc_html_e( 'Text Widget (legacy/classic mode)', 'azrcrv-siw' ); ?></th>
-				<td>
-					<label>
-						<input type="checkbox" name="enable_widget_text" value="1" <?php checked( $settings['enable_widget_text'], 1 ); ?> />
-						<?php esc_html_e( 'Expand shortcodes in the classic Text widget, and in any third-party widget that applies the "widget_text" filter.', 'azrcrv-siw' ); ?>
-					</label>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row"><?php esc_html_e( 'Text Widget (visual/block mode)', 'azrcrv-siw' ); ?></th>
-				<td>
-					<label>
-						<input type="checkbox" name="enable_widget_text_content" value="1" <?php checked( $settings['enable_widget_text_content'], 1 ); ?> />
-						<?php esc_html_e( 'Expand shortcodes in the visual-mode/block-based Text widget.', 'azrcrv-siw' ); ?>
-					</label>
-					<p class="description"><?php esc_html_e( 'ClassicPress/WordPress already does this for the built-in visual Text widget by default, and safely avoids double-processing if both this and the option above are enabled - this option mainly helps third-party widgets. See the Instructions tab for details.', 'azrcrv-siw' ); ?></p>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row"><?php esc_html_e( 'Custom HTML Widget', 'azrcrv-siw' ); ?></th>
-				<td>
-					<label>
-						<input type="checkbox" name="enable_widget_custom_html" value="1" <?php checked( $settings['enable_widget_custom_html'], 1 ); ?> />
-						<?php esc_html_e( 'Expand shortcodes in the Custom HTML widget.', 'azrcrv-siw' ); ?>
-					</label>
-					<p class="description"><?php esc_html_e( 'Only enable this if you understand your Custom HTML widgets - shortcode processing runs across the whole widget content, including any inline <script> blocks, so a stray "[" in JavaScript could be misinterpreted as a shortcode.', 'azrcrv-siw' ); ?></p>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row"><?php esc_html_e( 'Widget Titles', 'azrcrv-siw' ); ?></th>
-				<td>
-					<label>
-						<input type="checkbox" name="enable_widget_title" value="1" <?php checked( $settings['enable_widget_title'], 1 ); ?> />
-						<?php esc_html_e( 'Expand shortcodes in widget titles.', 'azrcrv-siw' ); ?>
-					</label>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+	<tr>
+		<th scope="row">
+			<label for="widget-height"><?php esc_html_e( 'Height', 'azrcrv-wa' ); ?></label>
+		</th>
+		<td>
+			<input name="widget-height" type="number" min="1" id="widget-height" value="<?php echo esc_attr( $options['widget']['height'] ); ?>" class="small-text" /> px
+		</td>
+	</tr>
 
-	<?php submit_button( __( 'Save Settings', 'azrcrv-siw' ) ); ?>
-</form>
+	<tr>
+		<th scope="row" colspan="2" class="azrcrv-settings-section-heading">
+			<h2 class="azrcrv-settings-section-heading"><?php esc_html_e( 'Integration', 'azrcrv-wa' ); ?></h2>
+		</th>
+	</tr>
+
+	<tr>
+		<th scope="row">
+			<label for="toggle-showhide-integration"><?php esc_html_e( 'Enable Toggle Show/Hide', 'azrcrv-wa' ); ?></label>
+		</th>
+		<td>
+			<?php if ( $toggle_showhide_enabled ) { ?>
+				<label for="toggle-showhide-integration">
+					<input name="toggle-showhide-integration" type="checkbox" id="toggle-showhide-integration" value="1" <?php checked( '1', $options['toggle-showhide']['integrate'] ); ?> />
+					<?php
+					printf(
+						/* translators: 1: plugin link, 2: developer link */
+						esc_html__( 'Enable integration with %1$s from %2$s?', 'azrcrv-wa' ),
+						'<a href="' . esc_url( admin_url( 'admin.php?page=azrcrv-tsh' ) ) . '">Toggle Show/Hide</a>',
+						DEVELOPER_LINK
+					);
+					?>
+				</label>
+			<?php } else { ?>
+				<?php
+				printf(
+					/* translators: 1: plugin link, 2: developer link */
+					esc_html__( '%1$s from %2$s not installed/activated.', 'azrcrv-wa' ),
+					'<a href="https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/">Toggle Show/Hide</a>',
+					DEVELOPER_LINK
+				);
+				?>
+			<?php } ?>
+		</td>
+	</tr>
+
+</table>
+<?php
+$tab_settings = ob_get_clean();

@@ -1,12 +1,48 @@
-.azrcrv-siw-wrap .form-table th {
-	width: 320px;
-}
-
-.azrcrv-siw-tab-panel {
-	margin-top: 15px;
-}
-
-.azrcrv-siw-settings label {
+/* Tab styles */
+.ui-tabs {
 	display: block;
+	position: relative;
 	margin-bottom: 6px;
+	overflow: auto;
+}
+.ui-tabs .ui-tabs-nav {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: left;
+	background: transparent;
+	border: none;
+	font-size: 1.3em;
+}
+.ui-tabs-nav .ui-state-default a {
+	border: 1px solid grey;
+	border-bottom: 4px solid grey;
+	color: grey;
+	background: transparent;
+}
+.ui-tabs-nav .ui-state-active a {
+	border: 1px solid #007FFF;
+	border-bottom: 4px solid #007FFF;
+	color: #007FFF;
+	background: transparent;
+}
+.ui-tabs-nav .ui-state-default a:hover {
+	border: 1px solid #ff8000;
+	border-bottom: 4px solid #ff8000;
+	color: #ff8000;
+	background: transparent;
+	font-weight: 700;
+}
+.ui-tabs-scroll {
+	margin-top: -1px;
+	border: 1px solid grey;
+	padding: 12px;
+}
+.ui-tabs-hidden {
+	display: none;
+}
+
+/* Repeat metabox selects */
+.azrcrv-wa-repeat-selects {
+	margin-left: 20px;
+	display: inline-block;
 }

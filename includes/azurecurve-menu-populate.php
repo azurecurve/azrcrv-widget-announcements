@@ -6,7 +6,7 @@
 /**
  * Declare the Namespace.
  */
-namespace azurecurve\ShortcodesInWidgets;
+namespace azurecurve\WidgetAnnouncements;
 
 /**
  * Prevent direct access.

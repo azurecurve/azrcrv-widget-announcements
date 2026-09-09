@@ -5,19 +5,18 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-// Hard-coded rather than referencing the plugin's constants: ClassicPress
-// calls uninstall.php standalone, without loading the main plugin file
-// first, so those constants are never defined here.
-$options = array( 'azrcrv-siw' );
+// Options to remove.
+// Hard-coded rather than using the PLUGIN_HYPHEN constant: WordPress/ClassicPress
+// calls uninstall.php standalone, without loading the main plugin file first, so
+// that constant is never defined here.
+$options = array(
+	'azrcrv-wa',
+);
 
 /**
  * Delete the plugin's own options for the current site.
- *
- * This plugin has no database table and no cron event, so there is nothing
- * else to clean up. Deliberately does NOT touch any widget content that
- * contains shortcodes - uninstalling should never rewrite site content.
  */
-function azrcrv_siw_uninstall_cleanup( $options ) {
+function azrcrv_cob_uninstall_delete_options( $options ) {
 	foreach ( $options as $option ) {
 		delete_option( $option );
 	}
@@ -26,19 +25,19 @@ function azrcrv_siw_uninstall_cleanup( $options ) {
 // Remove from single site.
 if ( ! is_multisite() ) {
 
-	azrcrv_siw_uninstall_cleanup( $options );
+	azrcrv_cob_uninstall_delete_options( $options );
 
-	// Remove from every site on a multisite network.
+	// Remove from multisite.
 } else {
 	global $wpdb;
 
 	$site_ids         = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
-	$original_site_id = get_current_blog_id();
+	$original_site_id = get_current_site_id();
 
 	foreach ( $site_ids as $site_id ) {
 		switch_to_blog( $site_id );
 
-		azrcrv_siw_uninstall_cleanup( $options );
+		azrcrv_cob_uninstall_delete_options( $options );
 	}
 
 	switch_to_blog( $original_site_id );

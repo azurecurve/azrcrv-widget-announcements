@@ -1,69 +1,32 @@
 <?php
-/*
-	admin script/style enqueue functions - only loaded on this plugin's own
-	admin screen.
-*/
+/**
+ * Script functions.
+ */
 
 /**
  * Declare the Namespace.
  */
-namespace azurecurve\ShortcodesInWidgets;
+namespace azurecurve\WidgetAnnouncements;
 
 /**
- * Prevent direct access.
+ * Register admin scripts.
+ *
+ * @since 1.6.0
  */
-if ( ! defined( 'ABSPATH' ) ) {
-	die();
+function register_admin_scripts() {
+	wp_register_script( 'azrcrv-admin-standard-js', esc_url_raw( plugins_url( '../assets/js/admin-standard.js', __FILE__ ) ), array(), '26.6.8', true );
 }
 
 /**
- * Enqueue admin CSS/JS, only on this plugin's own admin page or the shared
- * azurecurve cross-plugin menu page (both of which can render the
- * azrcrv-ui-tabs component and the plugin-index grid).
+ * Enqueue admin scripts.
+ *
+ * @since 1.6.0
  */
-function enqueue_admin_assets( $hook ) {
+function enqueue_admin_scripts() {
+	global $pagenow;
 
-	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only page identifier, not a state-changing action.
-	$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
-
-	if ( PLUGIN_HYPHEN !== $page && 'azrcrv-plugin-menu' !== $page ) {
-		return;
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	if ( isset( $_GET['page'] ) && ( $_GET['page'] === PLUGIN_HYPHEN || $_GET['page'] === 'azrcrv-plugin-menu' ) || $pagenow === 'profile.php' || $pagenow === 'edit-user.php' ) {
+		wp_enqueue_script( 'azrcrv-admin-standard-js' );
 	}
-
-	wp_enqueue_style(
-		PLUGIN_HYPHEN . '-admin-standard',
-		plugins_url( 'assets/css/admin-standard.css', PLUGIN_FILE ),
-		array(),
-		'2.0.0'
-	);
-
-	wp_enqueue_style(
-		PLUGIN_HYPHEN . '-admin-pluginmenu',
-		plugins_url( 'assets/css/admin-pluginmenu.css', PLUGIN_FILE ),
-		array(),
-		'2.0.0'
-	);
-
-	wp_enqueue_style(
-		PLUGIN_HYPHEN . '-admin',
-		plugins_url( 'assets/css/admin.css', PLUGIN_FILE ),
-		array( PLUGIN_HYPHEN . '-admin-standard' ),
-		'2.0.0'
-	);
-
-	wp_enqueue_script(
-		PLUGIN_HYPHEN . '-admin-standard',
-		plugins_url( 'assets/js/admin-standard.js', PLUGIN_FILE ),
-		array(),
-		'2.0.0',
-		true
-	);
-
-	wp_enqueue_script(
-		PLUGIN_HYPHEN . '-admin',
-		plugins_url( 'assets/js/admin.js', PLUGIN_FILE ),
-		array( PLUGIN_HYPHEN . '-admin-standard' ),
-		'2.0.0',
-		true
-	);
 }
